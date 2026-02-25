@@ -1,5 +1,8 @@
+import { redirect } from "react-router";
+import { Landing } from "ui/pages/Landing";
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+
+export type LandingProps = Pick<Route.ComponentProps, "loaderData" | "actionData">;
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +11,10 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
-  return <Welcome />;
+export async function action({}: Route.ActionArgs) {
+  return redirect('/subscription')
+}
+
+export default function Home({ loaderData }: Route.ComponentProps) {
+  return <Landing loaderData={loaderData} />;
 }
