@@ -4,17 +4,31 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: "Heading Now Trial 45";
+  src:
+    url("/fonts/HeadingNowTrial-45Medium.woff2") format("woff2"),
+    url("/fonts/HeadingNowTrial-45Medium.woff") format("woff"),
+    url("/fonts/HeadingNowTrial-45Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  
-  --color-aprosoja-dark: oklch(0.15 0.00 0);
+  --font-sans:
+    "Montserrat", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-heading-now:
+    "Heading Now Trial 45", ui-sans-serif, system-ui, sans-serif;
+
+  --color-aprosoja-dark: oklch(0.15 0 0);
   --color-aprosoja-teal: oklch(0.25 0.12 180);
-  --color-aprosoja-teal-deep: oklch(0.20 0.13 180);
-  --color-aprosoja-mint: oklch(0.70 0.10 160);
+  --color-aprosoja-teal-deep: oklch(0.2 0.13 180);
+  --color-aprosoja-mint: oklch(0.7 0.1 160);
   --color-aprosoja-mint-light: oklch(0.83 0.11 160);
   --color-aprosoja-cream: oklch(0.93 0.01 90);
-  --color-aprosoja-white: oklch(1.0 0.0 0);
+  --color-aprosoja-white: oklch(1 0 0);
 }
 
 html,
@@ -80,75 +94,75 @@ body {
   --foreground: oklch(0.93 0.01 90);
   --card: oklch(0.25 0.12 180);
   --card-foreground: oklch(0.93 0.01 90);
-  --popover: oklch(0.15 0.00 0);
+  --popover: oklch(0.15 0 0);
   --popover-foreground: oklch(0.93 0.01 90);
   --primary: oklch(0.25 0.12 180);
-  --primary-foreground: oklch(1.0 0.0 0);
-  --secondary: oklch(0.70 0.10 160);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.7 0.1 160);
   --secondary-foreground: oklch(0.25 0.12 180);
-  --muted: oklch(0.20 0.13 180);
-  --muted-foreground: oklch(0.80 0.05 90);
-  --accent: oklch(0.70 0.10 160);
+  --muted: oklch(0.2 0.13 180);
+  --muted-foreground: oklch(0.8 0.05 90);
+  --accent: oklch(0.7 0.1 160);
   --accent-foreground: oklch(0.25 0.12 180);
-  --destructive: oklch(0.60 0.24 27);
+  --destructive: oklch(0.6 0.24 27);
   --destructive-foreground: oklch(0.98 0.02 210);
-  --border: oklch(0.70 0.10 160);
-  --input: oklch(0.70 0.10 160);
-  --ring: oklch(0.70 0.10 160);
+  --border: oklch(0.7 0.1 160);
+  --input: oklch(0.7 0.1 160);
+  --ring: oklch(0.7 0.1 160);
   --chart-1: oklch(0.25 0.12 180);
-  --chart-2: oklch(0.70 0.10 160);
+  --chart-2: oklch(0.7 0.1 160);
   --chart-3: oklch(0.83 0.11 160);
-  --chart-4: oklch(0.20 0.13 180);
+  --chart-4: oklch(0.2 0.13 180);
   --chart-5: oklch(0.93 0.01 90);
   --sidebar: oklch(0.98 0.01 240);
   --sidebar-foreground: oklch(0.26 0.02 240);
-  --sidebar-primary: oklch(0.10 0.02 240);
+  --sidebar-primary: oklch(0.1 0.02 240);
   --sidebar-primary-foreground: oklch(0.98 0.01 240);
   --sidebar-accent: oklch(0.96 0.01 240);
-  --sidebar-accent-foreground: oklch(0.10 0.02 240);
+  --sidebar-accent-foreground: oklch(0.1 0.02 240);
   --sidebar-border: oklch(0.91 0.01 220);
-  --sidebar-ring: oklch(0.59 0.20 217);
-  --aprosoja-dark: oklch(0.15 0.00 0);
+  --sidebar-ring: oklch(0.59 0.2 217);
+  --aprosoja-dark: oklch(0.15 0 0);
   --aprosoja-teal: oklch(0.25 0.12 180);
-  --aprosoja-teal-deep: oklch(0.20 0.13 180);
-  --aprosoja-mint: oklch(0.70 0.10 160);
+  --aprosoja-teal-deep: oklch(0.2 0.13 180);
+  --aprosoja-mint: oklch(0.7 0.1 160);
   --aprosoja-mint-light: oklch(0.83 0.11 160);
   --aprosoja-cream: oklch(0.93 0.01 90);
-  --aprosoja-white: oklch(1.0 0.0 0);
+  --aprosoja-white: oklch(1 0 0);
 }
 
 .dark {
-  --background: oklch(0.15 0.00 0);
+  --background: oklch(0.15 0 0);
   --foreground: oklch(0.93 0.01 90);
   --card: oklch(0.25 0.12 180);
   --card-foreground: oklch(0.93 0.01 90);
-  --popover: oklch(0.15 0.00 0);
+  --popover: oklch(0.15 0 0);
   --popover-foreground: oklch(0.93 0.01 90);
-  --primary: oklch(0.70 0.10 160);
+  --primary: oklch(0.7 0.1 160);
   --primary-foreground: oklch(0.25 0.12 180);
-  --secondary: oklch(0.20 0.13 180);
-  --secondary-foreground: oklch(0.70 0.10 160);
-  --muted: oklch(0.20 0.13 180);
-  --muted-foreground: oklch(0.80 0.05 90);
-  --accent: oklch(0.20 0.13 180);
-  --accent-foreground: oklch(0.70 0.10 160);
-  --destructive: oklch(0.70 0.19 22);
-  --border: oklch(0.20 0.13 180);
-  --input: oklch(0.20 0.13 180);
-  --ring: oklch(0.70 0.10 160);
-  --chart-1: oklch(0.70 0.10 160);
+  --secondary: oklch(0.2 0.13 180);
+  --secondary-foreground: oklch(0.7 0.1 160);
+  --muted: oklch(0.2 0.13 180);
+  --muted-foreground: oklch(0.8 0.05 90);
+  --accent: oklch(0.2 0.13 180);
+  --accent-foreground: oklch(0.7 0.1 160);
+  --destructive: oklch(0.7 0.19 22);
+  --border: oklch(0.2 0.13 180);
+  --input: oklch(0.2 0.13 180);
+  --ring: oklch(0.7 0.1 160);
+  --chart-1: oklch(0.7 0.1 160);
   --chart-2: oklch(0.83 0.11 160);
   --chart-3: oklch(0.93 0.01 90);
   --chart-4: oklch(0.25 0.12 180);
-  --chart-5: oklch(0.20 0.13 180);
+  --chart-5: oklch(0.2 0.13 180);
   --sidebar: oklch(0.25 0.12 180);
   --sidebar-foreground: oklch(0.93 0.01 90);
-  --sidebar-primary: oklch(0.70 0.10 160);
+  --sidebar-primary: oklch(0.7 0.1 160);
   --sidebar-primary-foreground: oklch(0.25 0.12 180);
-  --sidebar-accent: oklch(0.20 0.13 180);
-  --sidebar-accent-foreground: oklch(0.70 0.10 160);
-  --sidebar-border: oklch(0.20 0.13 180);
-  --sidebar-ring: oklch(0.70 0.10 160);
+  --sidebar-accent: oklch(0.2 0.13 180);
+  --sidebar-accent-foreground: oklch(0.7 0.1 160);
+  --sidebar-border: oklch(0.2 0.13 180);
+  --sidebar-ring: oklch(0.7 0.1 160);
 }
 
 @layer base {
@@ -168,6 +182,11 @@ body {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -0.02em;
+  }
+
+  .font-heading-now {
+    font-family: "Heading Now Trial 45", sans-serif;
+    font-weight: 500;
   }
 
   .rounded-tag {
