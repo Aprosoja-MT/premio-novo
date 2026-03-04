@@ -11,20 +11,15 @@ export function InfoSection() {
         }}
       />
 
-      <div
-        className="relative w-full z-10 overflow-hidden"
-        style={{ marginTop: "-18.5vw", height: "34vw" }}
-      >
-        <img
-          src="/images/ilustracao-curvada.png"
-          alt="Ilustração agro sustentável"
-          className="w-full"
-          style={{ display: "block" }}
-        />
-      </div>
+      <img
+        src="/images/ilustracao-curvada.png"
+        alt="Ilustração agro sustentável"
+        className="relative w-full z-10"
+        style={{ display: "block", marginTop: "clamp(-340px, -24vw, -100px)", marginBottom: "clamp(-60px, -5vw, -20px)" }}
+      />
 
-      <div className="relative z-10 w-full px-[8%] pb-8 pt-4">
-        <div className="flex flex-row items-stretch justify-between">
+      <div className="relative z-10 w-full px-[8%]">
+        <div className="flex flex-row items-stretch justify-between gap-8">
 
           <div className="flex items-center overflow-hidden">
             <div

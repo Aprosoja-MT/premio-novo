@@ -6,10 +6,7 @@
 
 @font-face {
   font-family: "Heading Now Trial 45";
-  src:
-    url("/fonts/HeadingNowTrial-45Medium.woff2") format("woff2"),
-    url("/fonts/HeadingNowTrial-45Medium.woff") format("woff"),
-    url("/fonts/HeadingNowTrial-45Medium.ttf") format("truetype");
+  src: url("/fonts/HeadingNowTrial-45Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
