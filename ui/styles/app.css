@@ -87,7 +87,7 @@ body {
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.945 0.008 70);
+  --background: #F0F0ED;
   --foreground: oklch(0.93 0.01 90);
   --card: oklch(0.25 0.12 180);
   --card-foreground: oklch(0.93 0.01 90);
@@ -167,10 +167,29 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: #F0F0ED;
+    @apply text-foreground;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+
+
+.categories-swiper .swiper-pagination-bullet {
+  background: #024240;
+  opacity: 0.3;
+  width: 10px;
+  height: 10px;
+}
+.categories-swiper .swiper-pagination-bullet-active {
+  opacity: 1;
+  width: 12px;
+  height: 12px;
+}
+.categories-swiper .swiper-pagination {
+  position: static;
+  margin-top: 8px;
 }
 
 @layer utilities {
