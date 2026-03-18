@@ -5,11 +5,12 @@ interface CurvedSectionProps {
   bgAbove?: string;
   children?: ReactNode;
   className?: string;
+  id?: string;
 }
 
-export function CurvedSection({ fillColor, bgAbove, children, className = "" }: CurvedSectionProps) {
+export function CurvedSection({ fillColor, bgAbove, children, className = "", id }: CurvedSectionProps) {
   return (
-    <div className={className}>
+    <div className={className} id={id}>
       <div style={{ backgroundColor: bgAbove }}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +24,7 @@ export function CurvedSection({ fillColor, bgAbove, children, className = "" }: 
           />
         </svg>
       </div>
-      <div style={{ backgroundColor: fillColor }}>
+      <div style={{ backgroundColor: fillColor }} className="-mt-px">
         {children}
       </div>
     </div>

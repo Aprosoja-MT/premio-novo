@@ -7,11 +7,11 @@ export function Hero() {
       className="relative w-full overflow-hidden"
       style={{ background: HERO_GRADIENT }}
     >
-      <div className="relative z-10 flex items-center justify-center pt-20 pb-4">
+      <div className="relative z-10 flex items-center justify-center pt-24 sm:pt-28 pb-4">
         <img
           src="/assets/logo-premio-aprosoja.png"
           alt="Prêmio Aprosoja MT de Jornalismo 2026"
-          className="w-full max-w-[680px] px-6 select-none"
+          className="w-full max-w-[340px] sm:max-w-[500px] lg:max-w-[680px] px-6 select-none"
           draggable={false}
         />
       </div>

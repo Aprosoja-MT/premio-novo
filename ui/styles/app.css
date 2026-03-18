@@ -28,6 +28,10 @@
   --color-aprosoja-white: oklch(1 0 0);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
   @apply bg-background text-foreground;
@@ -179,14 +183,30 @@ body {
 .categories-swiper .swiper-pagination-bullet {
   background: #024240;
   opacity: 0.3;
+  width: 8px;
+  height: 8px;
+}
+
+@media (min-width: 640px) {
+  .categories-swiper .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.categories-swiper .swiper-pagination-bullet-active {
+  opacity: 1;
   width: 10px;
   height: 10px;
 }
-.categories-swiper .swiper-pagination-bullet-active {
-  opacity: 1;
-  width: 12px;
-  height: 12px;
+
+@media (min-width: 640px) {
+  .categories-swiper .swiper-pagination-bullet-active {
+    width: 12px;
+    height: 12px;
+  }
 }
+
 .categories-swiper .swiper-pagination {
   position: static;
   margin-top: 8px;

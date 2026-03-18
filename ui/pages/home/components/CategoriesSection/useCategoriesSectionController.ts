@@ -33,7 +33,7 @@ export const SLIDES = [
   { category: "REPORTAGEM EM TEXTO", podium: "/assets/awards-podium.png" },
   { category: "REPORTAGEM EM ÁUDIO", podium: "/assets/awards-podium.png" },
   { category: "FOTOJORNALISMO", podium: "/assets/awards-podium.png" },
-  { category: "JORNALISMO UNIVERSITÁRIO", podium: "/assets/awards-podium.png" },
+  { category: "JORNALISMO UNIVERSITÁRIO", podium: "/assets/podium-jornalismo-universitario.png" },
   { category: "DESTAQUES MATO-GROSSENSES", podium: "/assets/awards-podium.png" },
 ];
 
