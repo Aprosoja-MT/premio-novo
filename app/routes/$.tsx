@@ -1,8 +1,8 @@
-import type { Route } from "./+types/$";
+import type { Route } from './+types/$';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
-  if (url.pathname.startsWith("/.well-known/")) {
+  if (url.pathname.startsWith('/.well-known/')) {
     return new Response(null, { status: 404 });
   }
   throw new Response(null, { status: 404 });

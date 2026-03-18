@@ -1,15 +1,15 @@
-import "swiper/css";
-import "swiper/css/pagination";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { CurvedSection } from "~/components/ui/CurvedSection";
-import { FadeIn } from "~/components/ui/FadeIn";
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { CurvedSection } from '~/components/ui/CurvedSection';
+import { FadeIn } from '~/components/ui/FadeIn';
 import {
   CATEGORY_CARDS,
   SLIDES,
   useCategoriesSectionController,
-} from "./useCategoriesSectionController";
+} from './useCategoriesSectionController';
 
 export function CategoriesSection() {
   const { podiumSwiper, cardsSwiper, slidePodiumPrev, slidePodiumNext, slideCardsPrev, slideCardsNext } =
@@ -90,7 +90,7 @@ export function CategoriesSection() {
               src="/assets/categories-divider.svg"
               alt=""
               className="absolute inset-0 w-full h-full select-none"
-              style={{ objectFit: "fill" }}
+              style={{ objectFit: 'fill' }}
               draggable={false}
             />
             <span className="relative font-heading-now text-[24px] sm:text-[32px] lg:text-[43px] leading-none text-[#024240] mt-3 sm:mt-5">
@@ -121,7 +121,7 @@ export function CategoriesSection() {
                 spaceBetween={12}
                 loop
                 autoplay={{ delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: true }}
-                style={{ alignItems: "stretch" }}
+                style={{ alignItems: 'stretch' }}
               >
                 {CATEGORY_CARDS.map((card) => (
                   <SwiperSlide key={card.title} className="h-auto!">

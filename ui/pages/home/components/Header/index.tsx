@@ -1,6 +1,6 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { Menu, User, X } from "lucide-react";
-import { NAV_LINKS, useHeaderController } from "./useHeaderController";
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, User, X } from 'lucide-react';
+import { NAV_LINKS, useHeaderController } from './useHeaderController';
 
 export function Header() {
   const { menuOpen, toggleMenu, closeMenu, handleNavClick } = useHeaderController();
@@ -10,8 +10,8 @@ export function Header() {
       <div
         className="w-full max-w-[1280px] rounded-b-[20px] px-4 sm:px-6 lg:px-8"
         style={{
-          backdropFilter: "blur(4.5px)",
-          backgroundColor: "rgba(255,255,255,0.74)",
+          backdropFilter: 'blur(4.5px)',
+          backgroundColor: 'rgba(255,255,255,0.74)',
         }}
       >
         <div className="h-[71px] flex items-center gap-3 lg:gap-6">
@@ -64,7 +64,7 @@ export function Header() {
           <button
             onClick={toggleMenu}
             className="lg:hidden ml-auto flex items-center justify-center w-[40px] h-[40px] text-[#024240]"
-            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+            aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={menuOpen}
           >
             {menuOpen ? <X size={24} strokeWidth={2} /> : <Menu size={24} strokeWidth={2} />}
@@ -76,9 +76,9 @@ export function Header() {
             <motion.div
               className="lg:hidden pb-4 flex flex-col gap-1 overflow-hidden"
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
             >
               {NAV_LINKS.map((link) => (
                 <a

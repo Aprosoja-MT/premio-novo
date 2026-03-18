@@ -1,5 +1,5 @@
-import { CityIllustration } from "../CityIllustration";
-import { HERO_GRADIENT } from "./useHeroController";
+import { CityIllustration } from '../CityIllustration';
+import { HERO_GRADIENT } from './useHeroController';
 
 export function Hero() {
   return (

@@ -1,7 +1,7 @@
-import { ChevronDown } from "lucide-react";
-import { CurvedSection } from "~/components/ui/CurvedSection";
-import { FadeIn } from "~/components/ui/FadeIn";
-import { DESCRIPTION } from "./useWhatIsPremioSectionController";
+import { ChevronDown } from 'lucide-react';
+import { CurvedSection } from '~/components/ui/CurvedSection';
+import { FadeIn } from '~/components/ui/FadeIn';
+import { DESCRIPTION } from './useWhatIsPremioSectionController';
 
 export function WhatIsPremioSection() {
   return (
@@ -9,7 +9,7 @@ export function WhatIsPremioSection() {
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
         <FadeIn direction="right" className="flex flex-col gap-6 lg:gap-8 max-w-full lg:max-w-[560px]">
           <h2 className="font-heading-now text-[36px] sm:text-[44px] lg:text-[64px] leading-[42px] sm:leading-[50px] lg:leading-[67px] text-[#F1F1EE] text-center lg:text-left">
-            O QUE É O PRÊMIO{" "}
+            O QUE É O PRÊMIO{' '}
             <br />
             <span className="text-[#94D2B9]">APROSOJA MT</span>
             <br />

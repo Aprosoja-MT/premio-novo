@@ -1,5 +1,5 @@
-import { FadeIn } from "~/components/ui/FadeIn";
-import { LINKS, SOCIAL_ICONS } from "./useFooterController";
+import { FadeIn } from '~/components/ui/FadeIn';
+import { LINKS, SOCIAL_ICONS } from './useFooterController';
 
 export function Footer() {
   return (

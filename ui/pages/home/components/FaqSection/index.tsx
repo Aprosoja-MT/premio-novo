@@ -1,6 +1,6 @@
-import { CurvedSection } from "~/components/ui/CurvedSection";
-import { FadeIn } from "~/components/ui/FadeIn";
-import { FAQS, useFaqSectionController } from "./useFaqSectionController";
+import { CurvedSection } from '~/components/ui/CurvedSection';
+import { FadeIn } from '~/components/ui/FadeIn';
+import { FAQS, useFaqSectionController } from './useFaqSectionController';
 
 export function FaqSection() {
   const { openIndex, toggle } = useFaqSectionController();
@@ -31,17 +31,17 @@ export function FaqSection() {
                     </span>
                   </button>
                   {faq.answer && (
-                    <div className={`grid transition-all duration-300 ease-in-out ${openIndex === index ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+                    <div className={`grid transition-all duration-300 ease-in-out ${openIndex === index ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                       <div className="overflow-hidden">
                         <div className="flex gap-3 sm:gap-4 pb-4">
                           <div className="shrink-0 w-[34px] sm:w-[38px] flex justify-center">
                             <div className="w-[2px] bg-white/20 rounded-full" />
                           </div>
                           <p className="font-sans font-medium text-[13px] sm:text-[14px] lg:text-[15px] leading-relaxed text-white/80">
-                            {faq.answer.split("\n").map((line, i) => (
+                            {faq.answer.split('\n').map((line, i) => (
                               <span key={i}>
                                 {line}
-                                {i < faq.answer.split("\n").length - 1 && <br />}
+                                {i < faq.answer.split('\n').length - 1 && <br />}
                               </span>
                             ))}
                           </p>

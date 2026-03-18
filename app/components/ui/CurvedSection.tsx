@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 interface CurvedSectionProps {
   fillColor: string;
@@ -8,7 +8,7 @@ interface CurvedSectionProps {
   id?: string;
 }
 
-export function CurvedSection({ fillColor, bgAbove, children, className = "", id }: CurvedSectionProps) {
+export function CurvedSection({ fillColor, bgAbove, children, className = '', id }: CurvedSectionProps) {
   return (
     <div className={className} id={id}>
       <div style={{ backgroundColor: bgAbove }}>
