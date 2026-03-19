@@ -22,14 +22,10 @@ export async function action({ request }: ActionFunctionArgs) {
     const useCase = new SignInUseCase(authGateway);
     const { accessToken, refreshToken } = await useCase.execute(parsed.data);
 
-    return redirect('/', {
-      headers: {
-        'Set-Cookie': [
-          `accessToken=${accessToken}; HttpOnly; Path=/; SameSite=Lax`,
-          `refreshToken=${refreshToken}; HttpOnly; Path=/; SameSite=Lax`,
-        ].join(', '),
-      },
-    });
+    const headers = new Headers();
+    headers.append('Set-Cookie', `accessToken=${accessToken}; HttpOnly; Path=/; SameSite=Lax`);
+    headers.append('Set-Cookie', `refreshToken=${refreshToken}; HttpOnly; Path=/; SameSite=Lax`);
+    return redirect('/dashboard', { headers });
   } catch (error) {
     if (error instanceof InvalidCredentials) {
       return data({ error: 'E-mail ou senha inválidos.' }, { status: 401 });

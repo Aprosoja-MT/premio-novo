@@ -1,7 +1,7 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useFetcher } from 'react-router';
+import { useActionData, useNavigation, useSubmit } from 'react-router';
 import { z } from 'zod/v4';
 
 export const signInSchema = z.object({
@@ -12,7 +12,9 @@ export const signInSchema = z.object({
 export type SignInFormValues = z.infer<typeof signInSchema>;
 
 export function useSignInController() {
-  const fetcher = useFetcher<{ error?: string }>();
+  const submit = useSubmit();
+  const navigation = useNavigation();
+  const actionData = useActionData<{ error?: string }>();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignInFormValues>({
@@ -21,15 +23,15 @@ export function useSignInController() {
     mode: 'onTouched',
   });
 
-  const isSubmitting = fetcher.state !== 'idle';
-  const serverError = fetcher.data?.error;
+  const isSubmitting = navigation.state !== 'idle';
+  const serverError = actionData?.error;
 
-  function onSubmit(values: SignInFormValues) {
-    const formData = new FormData();
-    formData.append('email', values.email);
-    formData.append('password', values.password);
-    fetcher.submit(formData, { method: 'post', action: '/auth/sign-in' });
-  }
+  const onSubmit = form.handleSubmit((values) => {
+    submit(
+      { email: values.email, password: values.password },
+      { method: 'post', action: '/auth/sign-in', encType: 'application/x-www-form-urlencoded' },
+    );
+  });
 
   function togglePassword() {
     setShowPassword((prev) => !prev);
@@ -37,10 +39,10 @@ export function useSignInController() {
 
   return {
     form,
+    onSubmit,
     showPassword,
     togglePassword,
     isSubmitting,
     serverError,
-    onSubmit,
   };
 }

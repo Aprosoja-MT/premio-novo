@@ -19,7 +19,7 @@ const fadeUp = (delay = 0) => ({
 });
 
 export function SignInPage() {
-  const { form, showPassword, togglePassword, isSubmitting, serverError, onSubmit } =
+  const { form, onSubmit, showPassword, togglePassword, isSubmitting, serverError } =
     useSignInController();
 
   return (
@@ -55,7 +55,7 @@ export function SignInPage() {
 
           <motion.div {...fadeUp(0.2)} className="mt-8">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+              <form onSubmit={onSubmit} className="flex flex-col gap-4">
                 <FormField
                   control={form.control}
                   name="email"
