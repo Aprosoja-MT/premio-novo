@@ -2,6 +2,7 @@ import { redirect } from 'react-router';
 import type { Role } from '~/generated/prisma';
 import { AuthGateway } from '~/gateways/AuthGateway';
 import { InvalidRefreshToken } from '~/errors/InvalidRefreshToken';
+import prisma from '~/lib/prismaClient';
 
 export function getSessionFromRequest(request: Request) {
   const cookieHeader = request.headers.get('Cookie') ?? '';
@@ -43,17 +44,20 @@ export function isTokenExpired(accessToken: string): boolean {
   }
 }
 
-export function getRoleFromToken(accessToken: string): Role | null {
+function getSubFromToken(accessToken: string): string | null {
   try {
     const parts = accessToken.split('.');
     if (parts.length !== 3) { return null; }
     const decoded = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
-    const groups: string[] = decoded['cognito:groups'] ?? [];
-    const priority: Role[] = ['ADMIN', 'PHASE3_JUDGE', 'PHASE2_JUDGE', 'PHASE1_REVIEWER', 'CANDIDATE'];
-    return priority.find((r) => groups.includes(r)) ?? 'CANDIDATE';
+    return decoded['sub'] ?? null;
   } catch {
     return null;
   }
+}
+
+async function getRoleFromDatabase(externalId: string): Promise<Role | null> {
+  const user = await prisma.user.findUnique({ where: { externalId }, select: { role: true } });
+  return user?.role ?? null;
 }
 
 type WithSessionCallback<T> = (session: { accessToken: string; refreshToken: string; role: Role }, headers: Headers) => Promise<T>;
@@ -86,7 +90,10 @@ export async function withSession<T>(request: Request, callback: WithSessionCall
     }
   }
 
-  const role = getRoleFromToken(accessToken);
+  const externalId = getSubFromToken(accessToken);
+  if (!externalId) { return redirect('/auth/sign-in') as T; }
+
+  const role = await getRoleFromDatabase(externalId);
   if (!role) { return redirect('/auth/sign-in') as T; }
 
   return callback({ accessToken, refreshToken, role }, headers);
