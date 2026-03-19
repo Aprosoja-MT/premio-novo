@@ -38,6 +38,4 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
-export default function SignInPage() {
-  return null;
-}
+export { SignInPage as default } from '@/pages/auth/sign-in';
