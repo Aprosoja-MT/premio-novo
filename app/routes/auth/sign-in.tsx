@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { InvalidCredentials } from '~/errors/InvalidCredentials';
 import { AuthGateway } from '~/gateways/AuthGateway';
 import { SignInUseCase } from '~/usecases/SignInUseCase';
+import { buildSessionCookies } from '~/lib/session';
 
 const schema = z.object({
   email: z.string().email(),
@@ -20,11 +21,12 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     const authGateway = new AuthGateway();
     const useCase = new SignInUseCase(authGateway);
-    const { accessToken, refreshToken } = await useCase.execute(parsed.data);
+    const tokens = await useCase.execute(parsed.data);
 
     const headers = new Headers();
-    headers.append('Set-Cookie', `accessToken=${accessToken}; HttpOnly; Path=/; SameSite=Lax`);
-    headers.append('Set-Cookie', `refreshToken=${refreshToken}; HttpOnly; Path=/; SameSite=Lax`);
+    for (const cookie of buildSessionCookies(tokens)) {
+      headers.append('Set-Cookie', cookie);
+    }
     return redirect('/dashboard', { headers });
   } catch (error) {
     if (error instanceof InvalidCredentials) {
