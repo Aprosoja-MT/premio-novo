@@ -6,3 +6,198 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Role {
+  CANDIDATE
+  PHASE1_REVIEWER // Comissão de Habilitação
+  PHASE2_JUDGE // Comissão Técnica
+  PHASE3_JUDGE // Comissão Institucional
+  ADMIN
+}
+
+enum Category {
+  VIDEO
+  TEXT
+  AUDIO
+  PHOTO
+  UNIVERSITY
+  DESTAQUES_MT
+}
+
+enum Region {
+  NORTE
+  SUL
+  LESTE
+  OESTE
+  BAIXADA_CUIABANA
+}
+
+enum WorkStatus {
+  SUBMITTED // Submetida, aguardando Fase 1
+  QUALIFIED // Habilitada na Fase 1
+  DISQUALIFIED // Inabilitada na Fase 1
+  FINALIST // Selecionada na Fase 2
+}
+
+model User {
+  id         String   @id @default(cuid())
+  externalId String   @unique
+  email      String   @unique
+  role       Role     @default(CANDIDATE)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  candidate     Candidate?
+  phase1Reviews Phase1Review[]
+  phase2Scores  Phase2Score[]
+  phase3Scores  Phase3Score[]
+
+  @@map("users")
+}
+
+model Candidate {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Dados pessoais
+  name       String
+  socialName String?
+  cpf        String  @unique
+  phone      String
+  state      String  @db.Char(2) // UF — usado para validar Destaques MT
+  city       String
+
+  // Categoria de inscrição
+  category Category
+
+  // Documentação profissional (obrigatório se category != UNIVERSITY)
+  drtFile String?
+
+  // Documentação universitária (obrigatório se category == UNIVERSITY)
+  enrollmentFile String?
+
+  // Prêmio Master (sorteio)
+  wantsMaster Boolean   @default(false)
+  passport    String?
+  visaExpiry  DateTime?
+
+  emailConfirmedAt DateTime?
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  works Work[]
+
+  @@map("candidates")
+}
+
+// Obra!!
+
+model Work {
+  id          String   @id @default(cuid())
+  candidateId String
+  createdAt   DateTime @default(now())
+
+  title       String
+  category    Category
+  publishedAt DateTime // Janela: 12/09/2025–07/08/2026 (edicao 2026!)
+  description String     @db.VarChar(400)
+  status      WorkStatus @default(SUBMITTED)
+
+  // Mídia — cada categoria usa campos específicos
+  mediaFile String? // upload de arquivo (vídeo, áudio, pdf, foto)
+  mediaUrl  String? // link externo (texto online, vídeo/áudio externo)
+  isPrinted Boolean @default(false) // Texto sem link — sobe arquivo
+
+  // Destaques MT — obrigatório quando category = DESTAQUES_MT
+  region       Region?
+  sourceWorkId String? // obra de origem caso o candidato reaproveite uma obra existente
+
+  // Declarações obrigatórias
+  declarationAuthor  Boolean @default(false)
+  declarationVehicle Boolean @default(false)
+  declarationRules   Boolean @default(false)
+
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  sourceWork  Work?     @relation("DestaquesSource", fields: [sourceWorkId], references: [id])
+  derivedWork Work[]    @relation("DestaquesSource")
+
+  phase1Review Phase1Review?
+  phase2Scores Phase2Score[]
+  phase3Scores Phase3Score[]
+
+  @@map("works")
+}
+
+// ---------------------------------------------------------------------------
+// Fase 1 — Comissão de Habilitação
+// ---------------------------------------------------------------------------
+
+model Phase1Review {
+  id         String   @id @default(cuid())
+  workId     String   @unique
+  reviewerId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  qualified     Boolean
+  justification String? // Obrigatório se qualified = false
+
+  work     Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  reviewer User @relation(fields: [reviewerId], references: [id])
+
+  @@map("phase1_reviews")
+}
+
+// ---------------------------------------------------------------------------
+// Fase 2 — Comissão Técnica (jurados individuais, 9 critérios, nota 1–5)
+// ---------------------------------------------------------------------------
+
+model Phase2Score {
+  id        String   @id @default(cuid())
+  workId    String
+  judgeId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 9 critérios
+  thematicRelevance Int // Pertinência temática
+  newsContent       Int // Conteúdo da notícia
+  textQuality       Int // Qualidade de texto
+  narrativeQuality  Int // Qualidade da narrativa
+  aestheticQuality  Int // Qualidade estética
+  photoRelevance    Int // Relevância da fotografia
+  publicBenefit     Int // Benefício público
+  sources           Int // Fontes de informação
+  originality       Int // Originalidade, inovação e criatividade
+
+  work  Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  judge User @relation(fields: [judgeId], references: [id])
+
+  @@unique([workId, judgeId])
+  @@map("phase2_scores")
+}
+
+// ---------------------------------------------------------------------------
+// Fase 3 — Comissão Institucional (jurados individuais, 4 critérios, nota 1–5)
+// ---------------------------------------------------------------------------
+
+model Phase3Score {
+  id        String   @id @default(cuid())
+  workId    String
+  judgeId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 4 critérios
+  publicImpact       Int // Impacto público
+  technicalAlignment Int // Alinhamento técnico
+  informationClarity Int // Clareza da informação
+  chainContribution  Int // Contribuição para compreensão da cadeia produtiva
+
+  work  Work @relation(fields: [workId], references: [id], onDelete: Cascade)
+  judge User @relation(fields: [judgeId], references: [id])
+
+  @@unique([workId, judgeId])
+  @@map("phase3_scores")
+}

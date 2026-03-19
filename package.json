@@ -10,8 +10,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.1012.0",
+    "@aws-sdk/client-sesv2": "^3.1012.0",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
+    "@prisma/client-runtime-utils": "^7.5.0",
+    "@react-email/components": "^1.0.10",
+    "@react-email/render": "^2.0.4",
     "@react-router/node": "7.12.0",
     "@react-router/serve": "7.12.0",
     "class-variance-authority": "^0.7.1",
@@ -26,10 +31,12 @@
     "react-dom": "^19.2.4",
     "react-router": "7.12.0",
     "swiper": "^12.1.2",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@react-email/preview-server": "5.2.10",
     "@react-router/dev": "7.12.0",
     "@tailwindcss/vite": "^4.1.13",
     "@types/node": "^22",
@@ -39,6 +46,7 @@
     "eslint": "^10.0.3",
     "eslint-plugin-react": "^7.37.5",
     "prisma": "^7.5.0",
+    "react-email": "^5.2.10",
     "shadcn": "^3.8.5",
     "tailwindcss": "^4.1.13",
     "tsx": "^4.21.0",
@@ -46,6 +54,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.57.1",
     "vite": "^7.1.7",
+    "vite-plugin-commonjs": "^0.10.4",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }
