@@ -12,7 +12,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
   const url = new URL(request.url);
   const reset = url.searchParams.get('reset') === '1';
-  return { reset };
+  const registered = url.searchParams.get('registered') === '1';
+  return { reset, registered };
 }
 
 const schema = z.object({

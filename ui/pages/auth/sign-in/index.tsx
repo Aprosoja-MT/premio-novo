@@ -19,7 +19,7 @@ const fadeUp = (delay = 0) => ({
 });
 
 export function SignInPage() {
-  const { form, onSubmit, showPassword, togglePassword, isSubmitting, serverError, resetSuccess } =
+  const { form, onSubmit, showPassword, togglePassword, isSubmitting, serverError, resetSuccess, registeredSuccess } =
     useSignInController();
 
   return (
@@ -52,6 +52,21 @@ export function SignInPage() {
           <motion.p {...fadeUp(0.15)} className="mt-2 text-[13px] font-sans text-[#024240]/60">
             Entre com suas credenciais para gerenciar sua inscrição.
           </motion.p>
+
+          <AnimatePresence>
+            {registeredSuccess && (
+              <motion.p
+                key="registered-success"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="mt-4 text-[12px] font-sans text-[#024240] font-medium bg-[#94d2b9]/20 border border-[#94d2b9] rounded-[10px] px-4 py-3"
+              >
+                Cadastro realizado com sucesso! Faça login para continuar.
+              </motion.p>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence>
             {resetSuccess && (

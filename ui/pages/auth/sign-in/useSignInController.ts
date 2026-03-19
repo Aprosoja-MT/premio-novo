@@ -15,7 +15,7 @@ export function useSignInController() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<{ error?: string }>();
-  const { reset } = useLoaderData<{ reset: boolean }>();
+  const { reset, registered } = useLoaderData<{ reset: boolean; registered: boolean }>();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignInFormValues>({
@@ -46,5 +46,6 @@ export function useSignInController() {
     isSubmitting,
     serverError,
     resetSuccess: reset,
+    registeredSuccess: registered,
   };
 }
