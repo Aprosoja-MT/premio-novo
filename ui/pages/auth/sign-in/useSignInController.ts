@@ -1,7 +1,7 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useActionData, useNavigation, useSubmit } from 'react-router';
+import { useActionData, useLoaderData, useNavigation, useSubmit } from 'react-router';
 import { z } from 'zod/v4';
 
 export const signInSchema = z.object({
@@ -15,6 +15,7 @@ export function useSignInController() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const actionData = useActionData<{ error?: string }>();
+  const { reset } = useLoaderData<{ reset: boolean }>();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignInFormValues>({
@@ -44,5 +45,6 @@ export function useSignInController() {
     togglePassword,
     isSubmitting,
     serverError,
+    resetSuccess: reset,
   };
 }

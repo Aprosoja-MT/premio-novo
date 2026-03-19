@@ -1,12 +1,18 @@
-import { data, redirect, type ActionFunctionArgs } from 'react-router';
+import { data, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from 'react-router';
 import { z } from 'zod';
 import { InvalidCredentials } from '~/errors/InvalidCredentials';
 import { AuthGateway } from '~/gateways/AuthGateway';
-import { SignInUseCase } from '~/usecases/SignInUseCase';
 import { buildSessionCookies } from '~/lib/session';
+import { SignInUseCase } from '~/usecases/SignInUseCase';
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const reset = url.searchParams.get('reset') === '1';
+  return { reset };
+}
 
 const schema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(6),
 });
 

@@ -7,6 +7,7 @@ import {
   ConfirmForgotPasswordCommand,
   AdminDeleteUserCommand,
   AdminConfirmSignUpCommand,
+  AdminUpdateUserAttributesCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { cognitoClient } from '~/lib/cognitoClient';
 import { env } from '~/config/env';
@@ -99,12 +100,16 @@ export class AuthGateway {
   }
 
   async adminConfirmSignUp({ externalId }: AuthGateway.AdminConfirmSignUpParams): Promise<void> {
-    const command = new AdminConfirmSignUpCommand({
+    await cognitoClient.send(new AdminConfirmSignUpCommand({
       UserPoolId: env.COGNITO_USER_POOL_ID,
       Username: externalId,
-    });
+    }));
 
-    await cognitoClient.send(command);
+    await cognitoClient.send(new AdminUpdateUserAttributesCommand({
+      UserPoolId: env.COGNITO_USER_POOL_ID,
+      Username: externalId,
+      UserAttributes: [{ Name: 'email_verified', Value: 'true' }],
+    }));
   }
 
   async deleteUser({ externalId }: AuthGateway.DeleteUserParams): Promise<void> {
