@@ -2,10 +2,14 @@ import { data, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from
 import { z } from 'zod';
 import { InvalidCredentials } from '~/errors/InvalidCredentials';
 import { AuthGateway } from '~/gateways/AuthGateway';
-import { buildSessionCookies } from '~/lib/session';
+import { buildSessionCookies, getSessionFromRequest, isTokenExpired } from '~/lib/session';
 import { SignInUseCase } from '~/usecases/SignInUseCase';
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  const session = getSessionFromRequest(request);
+  if (session && !isTokenExpired(session.accessToken)) {
+    return redirect('/dashboard');
+  }
   const url = new URL(request.url);
   const reset = url.searchParams.get('reset') === '1';
   return { reset };

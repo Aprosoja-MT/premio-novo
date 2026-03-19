@@ -53,7 +53,7 @@ export function Header() {
             </a>
 
             <a
-              href="#entrar"
+              href="/auth/sign-in"
               className="flex items-center gap-1.5 h-[27px] lg:h-[29px] px-3 lg:px-4 border-[1.5px] border-[#94d2b9] rounded-[30px] text-[10px] lg:text-[11px] font-bold font-sans text-[#024240] uppercase whitespace-nowrap hover:bg-[#94d2b9]/10 transition-colors"
             >
               <User size={13} strokeWidth={1.5} />
@@ -108,7 +108,7 @@ export function Header() {
                     INSCRIÇÃO
                   </a>
                   <a
-                    href="#entrar"
+                    href="/auth/sign-in"
                     onClick={closeMenu}
                     className="flex-1 flex items-center justify-center gap-1.5 h-[40px] px-4 border-[1.5px] border-[#94d2b9] rounded-[30px] text-[12px] font-bold font-sans text-[#024240] uppercase hover:bg-[#94d2b9]/10 transition-colors"
                   >
