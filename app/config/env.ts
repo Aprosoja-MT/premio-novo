@@ -10,6 +10,8 @@ const schema = z.object({
   COGNITO_CLIENT_SECRET: z.string().min(1),
   SES_EMAIL_FROM: z.string().min(1),
   APP_URL: z.url(),
+  AWS_BUCKET: z.string().min(1),
+  AWS_BUCKET_DOMAIN_NAME: z.string().min(1),
 });
 
 export const env = schema.parse(process.env);

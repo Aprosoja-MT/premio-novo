@@ -12,8 +12,8 @@ const sesClient = new SESv2Client({
 });
 
 export class EmailGateway {
-  async sendVerifyEmail({ to, code }: EmailGateway.SendVerifyEmailParams): Promise<void> {
-    const html = await render(VerifyEmailTemplate({ code }));
+  async sendVerifyEmail({ to, link }: EmailGateway.SendVerifyEmailParams): Promise<void> {
+    const html = await render(VerifyEmailTemplate({ link }));
 
     const command = new SendEmailCommand({
       FromEmailAddress: env.SES_EMAIL_FROM,
@@ -31,5 +31,5 @@ export class EmailGateway {
 }
 
 export namespace EmailGateway {
-  export type SendVerifyEmailParams = { to: string; code: string };
+  export type SendVerifyEmailParams = { to: string; link: string };
 }

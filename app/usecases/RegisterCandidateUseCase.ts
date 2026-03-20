@@ -1,14 +1,18 @@
+import { randomBytes } from 'node:crypto';
 import { Category } from '~/generated/prisma';
 import { EmailAlreadyInUse } from '~/errors/EmailAlreadyInUse';
 import { AuthGateway } from '~/gateways/AuthGateway';
+import { EmailGateway } from '~/gateways/EmailGateway';
 import { CandidateRepository } from '~/repositories/CandidateRepository';
 import { UserRepository } from '~/repositories/UserRepository';
+import { env } from '~/config/env';
 
 export class RegisterCandidateUseCase {
   constructor(
     private readonly authGateway: AuthGateway,
     private readonly userRepository: UserRepository,
     private readonly candidateRepository: CandidateRepository,
+    private readonly emailGateway: EmailGateway,
   ) {}
 
   async execute(input: RegisterCandidateUseCase.Input): Promise<void> {
@@ -17,8 +21,9 @@ export class RegisterCandidateUseCase {
 
     const { externalId } = await this.authGateway.signUp({ email: input.email, password: input.password });
 
+    const token = randomBytes(32).toString('hex');
+
     try {
-      await this.authGateway.adminConfirmSignUp({ externalId });
       const user = await this.userRepository.create({ externalId, email: input.email });
 
       await this.candidateRepository.create({
@@ -35,7 +40,11 @@ export class RegisterCandidateUseCase {
         wantsMaster: input.wantsMaster,
         passport: input.passport,
         visaExpiry: input.visaExpiry,
+        emailVerificationToken: token,
       });
+
+      const link = `${env.APP_URL}/auth/verify-email?token=${token}`;
+      await this.emailGateway.sendVerifyEmail({ to: input.email, link });
     } catch (error) {
       await this.authGateway.deleteUser({ externalId });
       throw error;

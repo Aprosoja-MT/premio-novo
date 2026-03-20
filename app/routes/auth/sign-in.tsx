@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { InvalidCredentials } from '~/errors/InvalidCredentials';
 import { AuthGateway } from '~/gateways/AuthGateway';
 import { buildSessionCookies, getSessionFromRequest, isTokenExpired } from '~/lib/session';
+import { CandidateRepository } from '~/repositories/CandidateRepository';
+import { UserRepository } from '~/repositories/UserRepository';
 import { SignInUseCase } from '~/usecases/SignInUseCase';
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -13,7 +15,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const reset = url.searchParams.get('reset') === '1';
   const registered = url.searchParams.get('registered') === '1';
-  return { reset, registered };
+  const verified = url.searchParams.get('verified');
+  return { reset, registered, verified };
 }
 
 const schema = z.object({
@@ -30,6 +33,16 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
+    const userRepository = new UserRepository();
+    const candidateRepository = new CandidateRepository();
+    const user = await userRepository.findByEmail(parsed.data.email);
+    if (user) {
+      const candidate = await candidateRepository.findByUserId(user.id);
+      if (candidate && !candidate.emailConfirmedAt) {
+        return data({ error: 'Confirme seu e-mail antes de fazer login. Verifique sua caixa de entrada.' }, { status: 403 });
+      }
+    }
+
     const authGateway = new AuthGateway();
     const useCase = new SignInUseCase(authGateway);
     const tokens = await useCase.execute(parsed.data);

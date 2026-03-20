@@ -5,6 +5,21 @@ export class CandidateRepository {
   async create(params: CandidateRepository.CreateParams) {
     return prisma.candidate.create({ data: params });
   }
+
+  async findByVerificationToken(token: string) {
+    return prisma.candidate.findUnique({ where: { emailVerificationToken: token } });
+  }
+
+  async confirmEmail(id: string) {
+    return prisma.candidate.update({
+      where: { id },
+      data: { emailConfirmedAt: new Date(), emailVerificationToken: null },
+    });
+  }
+
+  async findByUserId(userId: string) {
+    return prisma.candidate.findUnique({ where: { userId } });
+  }
 }
 
 export namespace CandidateRepository {
@@ -22,5 +37,6 @@ export namespace CandidateRepository {
     wantsMaster: boolean;
     passport?: string;
     visaExpiry?: Date;
+    emailVerificationToken: string;
   };
 }

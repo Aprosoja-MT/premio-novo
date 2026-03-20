@@ -2,11 +2,12 @@ import { data, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from
 import { z } from 'zod';
 import { EmailAlreadyInUse } from '~/errors/EmailAlreadyInUse';
 import { AuthGateway } from '~/gateways/AuthGateway';
+import { EmailGateway } from '~/gateways/EmailGateway';
+import { Category } from '~/generated/prisma';
+import { getSessionFromRequest, isTokenExpired } from '~/lib/session';
 import { CandidateRepository } from '~/repositories/CandidateRepository';
 import { UserRepository } from '~/repositories/UserRepository';
-import { getSessionFromRequest, isTokenExpired } from '~/lib/session';
 import { RegisterCandidateUseCase } from '~/usecases/RegisterCandidateUseCase';
-import { Category } from '~/generated/prisma';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = getSessionFromRequest(request);
@@ -57,30 +58,21 @@ const schema = z.object({
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-
-  const drtEntry = formData.get('drtFile');
-  const enrollmentEntry = formData.get('enrollmentFile');
-  const drtFileName = drtEntry instanceof File && drtEntry.size > 0 ? drtEntry.name : undefined;
-  const enrollmentFileName = enrollmentEntry instanceof File && enrollmentEntry.size > 0 ? enrollmentEntry.name : undefined;
-
-  const raw = {
-    ...Object.fromEntries(formData),
-    drtFile: drtFileName,
-    enrollmentFile: enrollmentFileName,
-  };
+  const raw = Object.fromEntries(formData);
 
   const parsed = schema.safeParse(raw);
   if (!parsed.success) {
     return data({ error: 'Dados inválidos. Verifique os campos e tente novamente.' }, { status: 400 });
   }
 
-  const { email, password, name, socialName, cpf, phone, state, city, category, wantsMaster, passport, visaExpiry } = parsed.data;
+  const { email, password, name, socialName, cpf, phone, state, city, category, wantsMaster, passport, visaExpiry, drtFile, enrollmentFile } = parsed.data;
 
   try {
     const authGateway = new AuthGateway();
     const userRepository = new UserRepository();
     const candidateRepository = new CandidateRepository();
-    const useCase = new RegisterCandidateUseCase(authGateway, userRepository, candidateRepository);
+    const emailGateway = new EmailGateway();
+    const useCase = new RegisterCandidateUseCase(authGateway, userRepository, candidateRepository, emailGateway);
 
     await useCase.execute({
       email,
@@ -92,14 +84,14 @@ export async function action({ request }: ActionFunctionArgs) {
       state,
       city,
       category: category as Category,
-      drtFile: drtFileName,
-      enrollmentFile: enrollmentFileName,
+      drtFile: drtFile || undefined,
+      enrollmentFile: enrollmentFile || undefined,
       wantsMaster: wantsMaster === 'true',
       passport: passport || undefined,
       visaExpiry: visaExpiry ? new Date(visaExpiry) : undefined,
     });
 
-    return redirect('/auth/sign-in?registered=1');
+    return redirect(`/auth/verify-email-pending?email=${encodeURIComponent(email)}`);
   } catch (error) {
     if (error instanceof EmailAlreadyInUse) {
       return data({ error: 'Este e-mail já está em uso.' }, { status: 409 });

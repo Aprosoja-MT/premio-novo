@@ -1,10 +1,13 @@
 import { AnimatePresence, motion, type Transition } from 'framer-motion';
 import { ArrowLeft, Eye, EyeOff, Loader2, Upload } from 'lucide-react';
 import { useRef } from 'react';
+import { type UseFormReturn } from 'react-hook-form';
 import { Button } from '~/components/ui/Button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { CATEGORIES, useSignUpController, type Step } from './useSignUpController';
+import { DatePicker } from '~/components/ui/date-picker';
+import { maskPassport } from '~/lib/passport';
+import { CATEGORIES, useSignUpController, type SignUpFormValues, type Step } from './useSignUpController';
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -40,8 +43,8 @@ const SELECT_CLASS = 'h-[46px] rounded-[12px] border-[1.5px] border-[#94d2b9] bg
 const LABEL_CLASS = 'text-[11px] font-bold font-sans text-[#024240] uppercase tracking-wide';
 
 export function SignUpPage() {
-  const { form, step, nextStep, prevStep, onSubmit, isSubmitting, serverError, category, wantsMaster, showPassword, setShowPassword } =
-    useSignUpController();
+  const ctrl = useSignUpController();
+  const { form, step, nextStep, prevStep, onSubmit, isSubmitting, serverError, uploadError } = ctrl;
 
   return (
     <div className="min-h-screen flex">
@@ -82,61 +85,21 @@ export function SignUpPage() {
               <form onSubmit={onSubmit} className="flex flex-col gap-4">
                 <AnimatePresence mode="wait">
                   {step === 1 && <Step1 key="step1" form={form} />}
-                  {step === 2 && <Step2 key="step2" form={form} category={category} />}
-                  {step === 3 && <Step3 key="step3" form={form} showPassword={showPassword} setShowPassword={setShowPassword} />}
+                  {step === 2 && <Step2 key="step2" ctrl={ctrl} />}
+                  {step === 3 && <Step3 key="step3" form={form} showPassword={ctrl.showPassword} setShowPassword={ctrl.setShowPassword} />}
                 </AnimatePresence>
 
-                {wantsMaster && step === 2 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="flex flex-col gap-4 p-4 rounded-[12px] border-[1.5px] border-[#94d2b9]/60 bg-[#94d2b9]/10"
-                  >
-                    <p className="text-[11px] font-bold font-sans text-[#024240] uppercase tracking-wide">Prêmio Master — Viagem Internacional</p>
-                    <p className="text-[12px] font-sans text-[#024240]/70">Visto válido até dez/2027.</p>
-
-                    <FormField
-                      control={form.control}
-                      name="passport"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={LABEL_CLASS}>Passaporte</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Número do passaporte" className={INPUT_CLASS} {...field} />
-                          </FormControl>
-                          <FormMessage className="text-[11px]" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="visaExpiry"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={LABEL_CLASS}>Validade do visto</FormLabel>
-                          <FormControl>
-                            <Input type="date" className={INPUT_CLASS} {...field} />
-                          </FormControl>
-                          <FormMessage className="text-[11px]" />
-                        </FormItem>
-                      )}
-                    />
-                  </motion.div>
-                )}
-
                 <AnimatePresence>
-                  {serverError && step === 3 && (
+                  {(serverError || uploadError) && step === 3 && (
                     <motion.p
-                      key="server-error"
+                      key="error"
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.2 }}
                       className="text-[12px] font-sans text-destructive font-medium"
                     >
-                      {serverError}
+                      {uploadError ?? serverError}
                     </motion.p>
                   )}
                 </AnimatePresence>
@@ -184,7 +147,7 @@ export function SignUpPage() {
   );
 }
 
-function Step1({ form }: { form: ReturnType<typeof useSignUpController>['form'] }) {
+function Step1({ form }: { form: UseFormReturn<SignUpFormValues> }) {
   return (
     <motion.div
       key="s1"
@@ -197,7 +160,14 @@ function Step1({ form }: { form: ReturnType<typeof useSignUpController>['form'] 
       <FormField control={form.control} name="name" render={({ field }) => (
         <FormItem>
           <FormLabel className={LABEL_CLASS}>Nome completo</FormLabel>
-          <FormControl><Input placeholder="Seu nome completo" className={INPUT_CLASS} {...field} /></FormControl>
+          <FormControl>
+            <Input
+              placeholder="Seu nome completo"
+              className={INPUT_CLASS}
+              {...field}
+              onChange={(e) => field.onChange(e.target.value.replace(/[0-9]/g, ''))}
+            />
+          </FormControl>
           <FormMessage className="text-[11px]" />
         </FormItem>
       )} />
@@ -215,11 +185,16 @@ function Step1({ form }: { form: ReturnType<typeof useSignUpController>['form'] 
           <FormLabel className={LABEL_CLASS}>CPF</FormLabel>
           <FormControl>
             <Input
-              placeholder="00000000000"
-              maxLength={11}
+              placeholder="000.000.000-00"
+              maxLength={14}
               className={INPUT_CLASS}
               {...field}
-              onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
+              value={field.value
+                .replace(/\D/g, '')
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d)/, '$1.$2')
+                .replace(/(\d{3})(\d{1,2})$/, '$1-$2')}
+              onChange={(e) => field.onChange(e.target.value.replace(/\D/g, '').slice(0, 11))}
             />
           </FormControl>
           <FormMessage className="text-[11px]" />
@@ -229,7 +204,20 @@ function Step1({ form }: { form: ReturnType<typeof useSignUpController>['form'] 
       <FormField control={form.control} name="phone" render={({ field }) => (
         <FormItem>
           <FormLabel className={LABEL_CLASS}>Telefone</FormLabel>
-          <FormControl><Input type="tel" placeholder="(00) 00000-0000" className={INPUT_CLASS} {...field} /></FormControl>
+          <FormControl>
+            <Input
+              type="tel"
+              placeholder="(00) 00000-0000"
+              maxLength={15}
+              className={INPUT_CLASS}
+              {...field}
+              value={field.value
+                .replace(/\D/g, '')
+                .replace(/^(\d{2})(\d)/, '($1) $2')
+                .replace(/(\d{5})(\d{1,4})$/, '$1-$2')}
+              onChange={(e) => field.onChange(e.target.value.replace(/\D/g, '').slice(0, 11))}
+            />
+          </FormControl>
           <FormMessage className="text-[11px]" />
         </FormItem>
       )} />
@@ -262,11 +250,10 @@ function Step1({ form }: { form: ReturnType<typeof useSignUpController>['form'] 
   );
 }
 
-function Step2({ form, category }: { form: ReturnType<typeof useSignUpController>['form']; category: string | undefined }) {
+function Step2({ ctrl }: { ctrl: ReturnType<typeof useSignUpController> }) {
+  const { form, category, drtFile, setDrtFile, enrollmentFile, setEnrollmentFile, drtError } = ctrl;
   const drtRef = useRef<HTMLInputElement>(null);
   const enrollmentRef = useRef<HTMLInputElement>(null);
-  const drtFile = form.watch('drtFile');
-  const enrollmentFile = form.watch('enrollmentFile');
 
   return (
     <motion.div
@@ -293,59 +280,48 @@ function Step2({ form, category }: { form: ReturnType<typeof useSignUpController
       )} />
 
       {category && category !== 'UNIVERSITY' && (
-        <FormField control={form.control} name="drtFile" render={({ field: { onChange } }) => (
-          <FormItem>
-            <FormLabel className={LABEL_CLASS}>Registro DRT <span className="text-destructive">*</span></FormLabel>
-            <FormControl>
-              <>
-                <input
-                  type="file"
-                  ref={drtRef}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  className="hidden"
-                  onChange={(e) => onChange(e.target.files?.[0])}
-                />
-                <button
-                  type="button"
-                  onClick={() => drtRef.current?.click()}
-                  className="flex items-center gap-2 w-full h-[46px] px-3 rounded-[12px] border-[1.5px] border-dashed border-[#94d2b9] bg-white text-[13px] text-[#024240]/60 hover:bg-[#94d2b9]/10 transition-colors"
-                >
-                  <Upload size={14} strokeWidth={1.5} />
-                  {drtFile ? drtFile.name : 'Selecione o arquivo (PDF, JPG, PNG)'}
-                </button>
-              </>
-            </FormControl>
-            <FormMessage className="text-[11px]" />
-          </FormItem>
-        )} />
+        <div className="flex flex-col gap-1.5">
+          <span className={LABEL_CLASS}>
+            Registro DRT <span className="text-destructive">*</span>
+          </span>
+          <input
+            type="file"
+            ref={drtRef}
+            accept=".pdf,.jpg,.jpeg,.png"
+            className="hidden"
+            onChange={(e) => setDrtFile(e.target.files?.[0] ?? null)}
+          />
+          <button
+            type="button"
+            onClick={() => drtRef.current?.click()}
+            className="flex items-center gap-2 w-full h-[46px] px-3 rounded-[12px] border-[1.5px] border-dashed border-[#94d2b9] bg-white text-[13px] text-[#024240]/60 hover:bg-[#94d2b9]/10 transition-colors"
+          >
+            <Upload size={14} strokeWidth={1.5} />
+            {drtFile ? drtFile.name : 'Selecione o arquivo (PDF, JPG, PNG)'}
+          </button>
+          {drtError && <p className="text-[11px] font-medium text-destructive">{drtError}</p>}
+        </div>
       )}
 
       {category === 'UNIVERSITY' && (
-        <FormField control={form.control} name="enrollmentFile" render={({ field: { onChange } }) => (
-          <FormItem>
-            <FormLabel className={LABEL_CLASS}>Comprovante de matrícula ativa</FormLabel>
-            <FormControl>
-              <>
-                <input
-                  type="file"
-                  ref={enrollmentRef}
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  className="hidden"
-                  onChange={(e) => onChange(e.target.files?.[0])}
-                />
-                <button
-                  type="button"
-                  onClick={() => enrollmentRef.current?.click()}
-                  className="flex items-center gap-2 w-full h-[46px] px-3 rounded-[12px] border-[1.5px] border-dashed border-[#94d2b9] bg-white text-[13px] text-[#024240]/60 hover:bg-[#94d2b9]/10 transition-colors"
-                >
-                  <Upload size={14} strokeWidth={1.5} />
-                  {enrollmentFile ? enrollmentFile.name : 'Selecione o arquivo (PDF, JPG, PNG)'}
-                </button>
-              </>
-            </FormControl>
-            <FormMessage className="text-[11px]" />
-          </FormItem>
-        )} />
+        <div className="flex flex-col gap-1.5">
+          <span className={LABEL_CLASS}>Comprovante de matrícula ativa</span>
+          <input
+            type="file"
+            ref={enrollmentRef}
+            accept=".pdf,.jpg,.jpeg,.png"
+            className="hidden"
+            onChange={(e) => setEnrollmentFile(e.target.files?.[0] ?? null)}
+          />
+          <button
+            type="button"
+            onClick={() => enrollmentRef.current?.click()}
+            className="flex items-center gap-2 w-full h-[46px] px-3 rounded-[12px] border-[1.5px] border-dashed border-[#94d2b9] bg-white text-[13px] text-[#024240]/60 hover:bg-[#94d2b9]/10 transition-colors"
+          >
+            <Upload size={14} strokeWidth={1.5} />
+            {enrollmentFile ? enrollmentFile.name : 'Selecione o arquivo (PDF, JPG, PNG)'}
+          </button>
+        </div>
       )}
 
       <FormField control={form.control} name="wantsMaster" render={({ field }) => (
@@ -364,6 +340,51 @@ function Step2({ form, category }: { form: ReturnType<typeof useSignUpController
           <FormMessage className="text-[11px]" />
         </FormItem>
       )} />
+
+      <AnimatePresence>
+        {ctrl.wantsMaster && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="flex flex-col gap-4 p-4 rounded-[12px] border-[1.5px] border-[#94d2b9]/60 bg-[#94d2b9]/10"
+          >
+            <p className="text-[11px] font-bold font-sans text-[#024240] uppercase tracking-wide">Prêmio Master — Viagem Internacional</p>
+
+            <FormField control={form.control} name="passport" render={({ field }) => (
+              <FormItem>
+                <FormLabel className={LABEL_CLASS}>Passaporte</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="AA000000"
+                    maxLength={8}
+                    className={INPUT_CLASS}
+                    {...field}
+                    value={maskPassport(field.value ?? '')}
+                    onChange={(e) => field.onChange(maskPassport(e.target.value))}
+                  />
+                </FormControl>
+                <FormMessage className="text-[11px]" />
+              </FormItem>
+            )} />
+
+            <FormField control={form.control} name="visaExpiry" render={({ field }) => (
+              <FormItem>
+                <FormLabel className={LABEL_CLASS}>Validade do visto</FormLabel>
+                <FormControl>
+                  <DatePicker
+                    value={field.value as Date | undefined}
+                    onChange={field.onChange}
+                    placeholder="Selecione a validade"
+                    disabled={(date) => date < new Date()}
+                  />
+                </FormControl>
+                <FormMessage className="text-[11px]" />
+              </FormItem>
+            )} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
@@ -373,7 +394,7 @@ function Step3({
   showPassword,
   setShowPassword,
 }: {
-  form: ReturnType<typeof useSignUpController>['form'];
+  form: UseFormReturn<SignUpFormValues>;
   showPassword: boolean;
   setShowPassword: (v: boolean) => void;
 }) {

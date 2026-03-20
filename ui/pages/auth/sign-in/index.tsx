@@ -19,7 +19,7 @@ const fadeUp = (delay = 0) => ({
 });
 
 export function SignInPage() {
-  const { form, onSubmit, showPassword, togglePassword, isSubmitting, serverError, resetSuccess, registeredSuccess } =
+  const { form, onSubmit, showPassword, togglePassword, isSubmitting, serverError, resetSuccess, registeredSuccess, verifiedSuccess, verifiedInvalid } =
     useSignInController();
 
   return (
@@ -64,6 +64,36 @@ export function SignInPage() {
                 className="mt-4 text-[12px] font-sans text-[#024240] font-medium bg-[#94d2b9]/20 border border-[#94d2b9] rounded-[10px] px-4 py-3"
               >
                 Cadastro realizado com sucesso! Faça login para continuar.
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {verifiedSuccess && (
+              <motion.p
+                key="verified-success"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="mt-4 text-[12px] font-sans text-[#024240] font-medium bg-[#94d2b9]/20 border border-[#94d2b9] rounded-[10px] px-4 py-3"
+              >
+                E-mail confirmado com sucesso! Faça login para continuar.
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {verifiedInvalid && (
+              <motion.p
+                key="verified-invalid"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="mt-4 text-[12px] font-sans text-destructive font-medium bg-destructive/5 border border-destructive/20 rounded-[10px] px-4 py-3"
+              >
+                Link de verificação inválido ou expirado.
               </motion.p>
             )}
           </AnimatePresence>

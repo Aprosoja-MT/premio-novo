@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -12,14 +13,14 @@ import {
 import { logoAprosoja } from '../assets/logoAprosoja';
 
 interface VerifyEmailTemplateProps {
-  code: string;
+  link: string;
 }
 
-export function VerifyEmailTemplate({ code }: VerifyEmailTemplateProps) {
+export function VerifyEmailTemplate({ link }: VerifyEmailTemplateProps) {
   return (
     <Html lang="pt-BR">
       <Head />
-      <Preview>Seu código de verificação do Prêmio Aprosoja MT 2026</Preview>
+      <Preview>Confirme seu e-mail para acessar o Prêmio Aprosoja MT 2026</Preview>
       <Body style={styles.body}>
         <Container style={styles.container}>
           {/* Header */}
@@ -39,14 +40,13 @@ export function VerifyEmailTemplate({ code }: VerifyEmailTemplateProps) {
               Confirme o seu e-mail para concluir o cadastro.
             </Heading>
             <Text style={styles.body2}>
-              Use o código abaixo para verificar seu endereço de e-mail. Ele é
-              válido por 24 horas.
+              Clique no botão abaixo para verificar seu endereço de e-mail e
+              ativar sua conta.
             </Text>
 
-            {/* Code box */}
-            <Section style={styles.codeBox}>
-              <Text style={styles.code}>{code}</Text>
-            </Section>
+            <Button href={link} style={styles.button}>
+              Confirmar e-mail
+            </Button>
 
             <Text style={styles.disclaimer}>
               Não solicitou este e-mail? Ignore esta mensagem. Nenhuma ação será
@@ -68,7 +68,7 @@ export function VerifyEmailTemplate({ code }: VerifyEmailTemplateProps) {
 }
 
 VerifyEmailTemplate.PreviewProps = {
-  code: '144833',
+  link: 'http://localhost:3000/auth/verify-email?token=abc123',
 } satisfies VerifyEmailTemplateProps;
 
 export default VerifyEmailTemplate;
@@ -127,22 +127,18 @@ const styles = {
     margin: '0 0 28px',
   },
 
-  // Code box
-  codeBox: {
-    backgroundColor: '#f0f7f3',
-    borderRadius: '6px',
-    border: '1px solid #c8e3d0',
+  button: {
+    backgroundColor: '#024240',
+    borderRadius: '30px',
+    color: '#ffffff',
+    display: 'block',
+    fontSize: '13px',
+    fontWeight: '700',
+    letterSpacing: '1px',
     margin: '0 0 24px',
-    padding: '4px 0',
-    textAlign: 'center' as const,
-  },
-  code: {
-    color: '#1a6e34',
-    fontSize: '36px',
-    fontWeight: '800',
-    letterSpacing: '8px',
-    lineHeight: '1',
-    margin: '16px 0',
+    padding: '14px 32px',
+    textDecoration: 'none',
+    textTransform: 'uppercase' as const,
   },
 
   disclaimer: {
