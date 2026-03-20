@@ -11,5 +11,6 @@ export default [
   route('auth/verify-email-pending', 'routes/auth/verify-email-pending.tsx'),
   route('api/upload-url', 'routes/api/upload-url.ts'),
   route('dashboard', 'routes/dashboard/index.tsx'),
+  route('dashboard/admin/users', 'routes/dashboard/admin/users.tsx'),
   route('*', 'routes/$.tsx'),
 ] satisfies RouteConfig;
