@@ -106,11 +106,19 @@ function SidebarContent({ role }: { role: Role }) {
               </a>
             </li>
           )}
-          {role === 'PHASE1_REVIEWER' && (
+          {(role === 'PHASE1_REVIEWER' || role === 'ADMIN') && (
             <li>
               <a href="/dashboard/phase1/works" className={navClass('/dashboard/phase1/works')}>
                 <FileText size={15} strokeWidth={1.75} />
-                Obras
+                Habilitação
+              </a>
+            </li>
+          )}
+          {(role === 'PHASE2_JUDGE' || role === 'ADMIN') && (
+            <li>
+              <a href="/dashboard/phase2/works" className={navClass('/dashboard/phase2/works')}>
+                <FileText size={15} strokeWidth={1.75} />
+                Avaliação Técnica
               </a>
             </li>
           )}

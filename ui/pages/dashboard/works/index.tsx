@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  CheckCircle2,
+  Clock,
   ExternalLink,
   FileText,
   Loader2,

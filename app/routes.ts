@@ -15,5 +15,6 @@ export default [
   route('dashboard/works', 'routes/dashboard/works.tsx'),
   route('dashboard/admin/users', 'routes/dashboard/admin/users.tsx'),
   route('dashboard/phase1/works', 'routes/dashboard/phase1/works.tsx'),
+  route('dashboard/phase2/works', 'routes/dashboard/phase2/works.tsx'),
   route('*', 'routes/$.tsx'),
 ] satisfies RouteConfig;
