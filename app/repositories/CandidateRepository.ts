@@ -20,6 +20,10 @@ export class CandidateRepository {
   async findByUserId(userId: string) {
     return prisma.candidate.findUnique({ where: { userId } });
   }
+
+  async updateProfilePhoto(id: string, profilePhoto: string | null) {
+    return prisma.candidate.update({ where: { id }, data: { profilePhoto } });
+  }
 }
 
 export namespace CandidateRepository {

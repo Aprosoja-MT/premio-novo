@@ -1,11 +1,11 @@
 import { data, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from 'react-router';
 import { z } from 'zod';
+import { CpfAlreadyInUse } from '~/errors/CpfAlreadyInUse';
 import { EmailAlreadyInUse } from '~/errors/EmailAlreadyInUse';
 import { AuthGateway } from '~/gateways/AuthGateway';
 import { EmailGateway } from '~/gateways/EmailGateway';
 import { Category } from '~/generated/prisma';
 import { getSessionFromRequest, isTokenExpired } from '~/lib/session';
-import { CandidateRepository } from '~/repositories/CandidateRepository';
 import { UserRepository } from '~/repositories/UserRepository';
 import { RegisterCandidateUseCase } from '~/usecases/RegisterCandidateUseCase';
 
@@ -70,9 +70,8 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     const authGateway = new AuthGateway();
     const userRepository = new UserRepository();
-    const candidateRepository = new CandidateRepository();
     const emailGateway = new EmailGateway();
-    const useCase = new RegisterCandidateUseCase(authGateway, userRepository, candidateRepository, emailGateway);
+    const useCase = new RegisterCandidateUseCase(authGateway, userRepository, emailGateway);
 
     await useCase.execute({
       email,
@@ -95,6 +94,9 @@ export async function action({ request }: ActionFunctionArgs) {
   } catch (error) {
     if (error instanceof EmailAlreadyInUse) {
       return data({ error: 'Este e-mail já está em uso.' }, { status: 409 });
+    }
+    if (error instanceof CpfAlreadyInUse) {
+      return data({ error: 'Este CPF já está cadastrado.' }, { status: 409 });
     }
     throw error;
   }

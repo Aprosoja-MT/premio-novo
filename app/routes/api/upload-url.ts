@@ -1,13 +1,14 @@
 import { data, type ActionFunctionArgs } from 'react-router';
 import { z } from 'zod';
-import { StorageGateway } from '~/gateways/StorageGateway';
+import { ALL_ALLOWED_CONTENT_TYPES, StorageGateway } from '~/gateways/StorageGateway';
 import { GetUploadUrlUseCase } from '~/usecases/GetUploadUrlUseCase';
 
-const ALLOWED_CONTENT_TYPES = ['application/pdf', 'image/jpeg', 'image/png'];
-
 const schema = z.object({
-  contentType: z.string().refine((v) => ALLOWED_CONTENT_TYPES.includes(v), { message: 'Tipo de arquivo não permitido.' }),
-  folder: z.enum(['drt', 'enrollment']),
+  contentType: z.string().refine(
+    (v) => (ALL_ALLOWED_CONTENT_TYPES as readonly string[]).includes(v),
+    { message: 'Tipo de arquivo não permitido.' },
+  ),
+  folder: z.enum(['drt', 'enrollment', 'profile', 'works']),
 });
 
 export async function action({ request }: ActionFunctionArgs) {

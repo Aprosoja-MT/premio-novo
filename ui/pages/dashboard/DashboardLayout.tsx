@@ -1,4 +1,4 @@
-import { LayoutDashboard, LogOut, Menu, Users, X } from 'lucide-react';
+import { FileText, LayoutDashboard, LogOut, Menu, UserCircle, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { Role } from '~/lib/roles';
@@ -90,6 +90,22 @@ function SidebarContent({ role }: { role: Role }) {
               Visão Geral
             </a>
           </li>
+          {role === 'CANDIDATE' && (
+            <li>
+              <a href="/dashboard/works" className={navClass('/dashboard/works')}>
+                <FileText size={15} strokeWidth={1.75} />
+                Obras
+              </a>
+            </li>
+          )}
+          {role === 'CANDIDATE' && (
+            <li>
+              <a href="/dashboard/profile" className={navClass('/dashboard/profile')}>
+                <UserCircle size={15} strokeWidth={1.75} />
+                Meu Perfil
+              </a>
+            </li>
+          )}
           {role === 'ADMIN' && (
             <li>
               <a href="/dashboard/admin/users" className={navClass('/dashboard/admin/users')}>

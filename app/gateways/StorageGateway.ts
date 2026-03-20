@@ -4,8 +4,20 @@ import { s3Client } from '~/lib/s3Client';
 
 const EXPIRES_IN_SECONDS = 5 * 60;
 
-const ALLOWED_CONTENT_TYPES = ['application/pdf', 'image/jpeg', 'image/png'] as const;
-type AllowedContentType = (typeof ALLOWED_CONTENT_TYPES)[number];
+const DOCUMENT_CONTENT_TYPES = ['application/pdf', 'image/jpeg', 'image/png'] as const;
+const WORK_CONTENT_TYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'video/mp4',
+  'video/quicktime',
+  'audio/mpeg',
+  'audio/mp4',
+  'audio/wav',
+] as const;
+
+export const ALL_ALLOWED_CONTENT_TYPES = [...new Set([...DOCUMENT_CONTENT_TYPES, ...WORK_CONTENT_TYPES])] as const;
+type AllowedContentType = (typeof ALL_ALLOWED_CONTENT_TYPES)[number];
 
 export class StorageGateway {
   getFileUrl(key: string): string {

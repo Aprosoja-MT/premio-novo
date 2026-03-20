@@ -1,23 +1,18 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, type UseFormReturn } from 'react-hook-form';
 import { useActionData, useNavigation, useSubmit } from 'react-router';
 import { z } from 'zod/v4';
+import { CATEGORIES, CATEGORY_VALUES } from '~/lib/enums';
 import { isValidCpf } from '~/lib/cpf';
 import { isValidPassport } from '~/lib/passport';
+
+export { CATEGORIES };
 
 const BRAZILIAN_STATES = [
   'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA',
   'MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN',
   'RS','RO','RR','SC','SP','SE','TO',
-] as const;
-
-export const CATEGORIES = [
-  { value: 'VIDEO', label: 'Reportagem em Vídeo' },
-  { value: 'TEXT', label: 'Reportagem em Texto' },
-  { value: 'AUDIO', label: 'Reportagem em Áudio' },
-  { value: 'PHOTO', label: 'Fotojornalismo' },
-  { value: 'UNIVERSITY', label: 'Jornalismo Universitário' },
 ] as const;
 
 const schema = z.object({
@@ -27,7 +22,7 @@ const schema = z.object({
   phone: z.string().min(10, { error: 'Telefone inválido.' }),
   state: z.enum(BRAZILIAN_STATES, { error: 'Selecione um estado.' }),
   city: z.string().min(2, { error: 'Informe sua cidade.' }),
-  category: z.enum(['VIDEO', 'TEXT', 'AUDIO', 'PHOTO', 'UNIVERSITY'], { error: 'Selecione uma categoria.' }),
+  category: z.enum(CATEGORY_VALUES as [string, ...string[]], { error: 'Selecione uma categoria.' }),
   wantsMaster: z.boolean().default(false),
   passport: z.string().refine((v) => !v || isValidPassport(v), { error: 'Passaporte inválido. Formato: AA000000.' }).optional(),
   visaExpiry: z.date({ error: 'Informe a validade do visto.' }).optional(),
@@ -106,6 +101,12 @@ export function useSignUpController() {
     },
     mode: 'onTouched',
   });
+
+  useEffect(() => {
+    if (actionData) {
+      setIsUploading(false);
+    }
+  }, [actionData]);
 
   const isSubmitting = isUploading || navigation.state !== 'idle';
   const serverError = actionData?.error;

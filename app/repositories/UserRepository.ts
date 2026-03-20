@@ -1,4 +1,4 @@
-import { Role } from '~/generated/prisma';
+import { Category, Role } from '~/generated/prisma';
 import prisma from '~/lib/prismaClient';
 
 export class UserRepository {
@@ -16,6 +16,21 @@ export class UserRepository {
 
   async create({ externalId, email, role = Role.CANDIDATE }: UserRepository.CreateParams) {
     return prisma.user.create({ data: { externalId, email, role } });
+  }
+
+  async createWithCandidate(
+    userParams: UserRepository.CreateParams,
+    candidateParams: Omit<UserRepository.CandidateCreateParams, 'userId'>,
+  ) {
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: { externalId: userParams.externalId, email: userParams.email, role: Role.CANDIDATE },
+      });
+      const candidate = await tx.candidate.create({
+        data: { userId: user.id, ...candidateParams },
+      });
+      return { user, candidate };
+    });
   }
 
   async listWithStats(filters: UserRepository.ListFilters = {}) {
@@ -67,5 +82,22 @@ export namespace UserRepository {
   export type ListFilters = {
     role?: Role;
     wantsMaster?: boolean;
+  };
+
+  export type CandidateCreateParams = {
+    userId: string;
+    name: string;
+    socialName?: string;
+    cpf: string;
+    phone: string;
+    state: string;
+    city: string;
+    category: Category;
+    drtFile?: string;
+    enrollmentFile?: string;
+    wantsMaster: boolean;
+    passport?: string;
+    visaExpiry?: Date;
+    emailVerificationToken: string;
   };
 }

@@ -39,6 +39,13 @@ enum WorkStatus {
   FINALIST // Selecionada na Fase 2
 }
 
+enum WorkFormat {
+  VIDEO
+  TEXT
+  AUDIO
+  PHOTO
+}
+
 model User {
   id         String   @id @default(cuid())
   externalId String   @unique
@@ -83,6 +90,8 @@ model Candidate {
   passport    String?
   visaExpiry  DateTime?
 
+  profilePhoto String?
+
   emailVerificationToken String?   @unique
   emailConfirmedAt       DateTime?
 
@@ -104,6 +113,8 @@ model Work {
   publishedAt DateTime // Janela: 12/09/2025–07/08/2026 (edicao 2026!)
   description String     @db.VarChar(400)
   status      WorkStatus @default(SUBMITTED)
+
+  workFormat WorkFormat? // Obrigatório quando category = UNIVERSITY
 
   // Mídia — cada categoria usa campos específicos
   mediaFile String? // upload de arquivo (vídeo, áudio, pdf, foto)

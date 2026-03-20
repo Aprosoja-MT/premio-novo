@@ -44,7 +44,7 @@ export function isTokenExpired(accessToken: string): boolean {
   }
 }
 
-function getSubFromToken(accessToken: string): string | null {
+export function getSubFromToken(accessToken: string): string | null {
   try {
     const parts = accessToken.split('.');
     if (parts.length !== 3) { return null; }
