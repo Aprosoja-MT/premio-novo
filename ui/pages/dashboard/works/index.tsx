@@ -1,16 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  CheckCircle2,
-  Clock,
   ExternalLink,
   FileText,
   Loader2,
   MapPin,
   Plus,
-  Star,
   Trash2,
   Upload,
-  XCircle,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useLoaderData } from 'react-router';
@@ -18,6 +14,7 @@ import { Button } from '~/components/ui/Button';
 import { DatePicker } from '~/components/ui/date-picker';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '~/components/ui/sheet';
 import { CATEGORY_LABELS, REGION_LABELS, REGIONS, WORK_FORMATS } from '~/lib/enums';
+import { WORK_STATUS_CONFIG } from '@/lib/workStatus';
 import type { Role } from '~/lib/roles';
 import { isoToBR } from '~/lib/utils';
 import { DashboardLayout } from '../DashboardLayout';
@@ -31,12 +28,6 @@ import {
 } from './useWorksController';
 
 
-const STATUS_CONFIG = {
-  SUBMITTED: { label: 'Em avaliação', color: 'text-amber-600 bg-amber-50 border-amber-200', icon: Clock },
-  QUALIFIED: { label: 'Habilitada', color: 'text-emerald-600 bg-emerald-50 border-emerald-200', icon: CheckCircle2 },
-  DISQUALIFIED: { label: 'Inabilitada', color: 'text-destructive bg-destructive/5 border-destructive/20', icon: XCircle },
-  FINALIST: { label: 'Finalista', color: 'text-amber-500 bg-amber-50 border-amber-200', icon: Star },
-} as const;
 
 const INPUT_CLASS = 'h-[44px] rounded-[12px] border-[1.5px] border-aprosoja-mint bg-white text-[13px] text-aprosoja-teal placeholder:text-aprosoja-teal/30 focus:outline-none focus:border-aprosoja-teal px-3 w-full';
 const TEXTAREA_CLASS = 'rounded-[12px] border-[1.5px] border-aprosoja-mint bg-white text-[13px] text-aprosoja-teal placeholder:text-aprosoja-teal/30 focus:outline-none focus:border-aprosoja-teal px-3 py-2.5 w-full resize-none';
@@ -337,7 +328,7 @@ function WorkCard({
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
 }) {
-  const cfg = STATUS_CONFIG[work.status];
+  const cfg = WORK_STATUS_CONFIG[work.status];
   const Icon = cfg.icon;
   const canDelete = work.status === 'SUBMITTED';
 

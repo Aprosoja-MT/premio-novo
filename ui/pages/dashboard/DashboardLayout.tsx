@@ -106,6 +106,14 @@ function SidebarContent({ role }: { role: Role }) {
               </a>
             </li>
           )}
+          {role === 'PHASE1_REVIEWER' && (
+            <li>
+              <a href="/dashboard/phase1/works" className={navClass('/dashboard/phase1/works')}>
+                <FileText size={15} strokeWidth={1.75} />
+                Obras
+              </a>
+            </li>
+          )}
           {role === 'ADMIN' && (
             <li>
               <a href="/dashboard/admin/users" className={navClass('/dashboard/admin/users')}>
