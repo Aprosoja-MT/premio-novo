@@ -1,4 +1,4 @@
-import { FileText, LayoutDashboard, LogOut, Menu, UserCircle, Users, X } from 'lucide-react';
+import { FileText, LayoutDashboard, LogOut, Menu, Trophy, UserCircle, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'react-router';
 import { Role } from '~/lib/roles';
@@ -119,6 +119,22 @@ function SidebarContent({ role }: { role: Role }) {
               <a href="/dashboard/phase2/works" className={navClass('/dashboard/phase2/works')}>
                 <FileText size={15} strokeWidth={1.75} />
                 Avaliação Técnica
+              </a>
+            </li>
+          )}
+          {(role === 'PHASE3_JUDGE' || role === 'ADMIN') && (
+            <li>
+              <a href="/dashboard/phase3/works" className={navClass('/dashboard/phase3/works')}>
+                <FileText size={15} strokeWidth={1.75} />
+                Comissão Institucional
+              </a>
+            </li>
+          )}
+          {role === 'ADMIN' && (
+            <li>
+              <a href="/dashboard/admin/ranking" className={navClass('/dashboard/admin/ranking')}>
+                <Trophy size={15} strokeWidth={1.75} />
+                Ranking Final
               </a>
             </li>
           )}

@@ -8,9 +8,9 @@ export class Phase1ReviewRepository {
     const { page = 1, status, category } = params;
 
     const where: {
-      status?: WorkStatus;
+      status?: WorkStatus | { in: WorkStatus[] };
       category?: Category;
-    } = {};
+    } = { status: { in: ['SUBMITTED', 'QUALIFIED', 'DISQUALIFIED'] } };
     if (status) { where.status = status; }
     if (category) { where.category = category; }
 
@@ -77,7 +77,7 @@ export class Phase1ReviewRepository {
 
   async updateWorkStatus(workId: string, qualified: boolean) {
     return prisma.work.update({
-      where: { id: workId },
+      where: { id: workId, status: { in: ['SUBMITTED', 'QUALIFIED', 'DISQUALIFIED'] } },
       data: { status: qualified ? 'QUALIFIED' : 'DISQUALIFIED' },
     });
   }

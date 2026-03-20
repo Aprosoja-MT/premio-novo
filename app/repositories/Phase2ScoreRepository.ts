@@ -87,18 +87,28 @@ export class Phase2ScoreRepository {
           select: {
             thematicRelevance: true,
             newsContent: true,
+            textQuality: true,
+            narrativeQuality: true,
+            aestheticQuality: true,
+            photoRelevance: true,
             publicBenefit: true,
+            sources: true,
             originality: true,
           },
         },
       },
     });
 
-    function totalScore(scores: { thematicRelevance: number; newsContent: number; publicBenefit: number; originality: number }[]) {
-      return scores.reduce((sum, s) => sum + s.thematicRelevance + s.newsContent + s.publicBenefit + s.originality, 0);
+    type ScoreRow = typeof qualifiedWorks[0]['phase2Scores'][0];
+
+    function totalScore(scores: ScoreRow[]) {
+      return scores.reduce((sum, s) =>
+        sum + s.thematicRelevance + s.newsContent + s.textQuality +
+        s.narrativeQuality + s.aestheticQuality + s.photoRelevance +
+        s.publicBenefit + s.sources + s.originality, 0);
     }
 
-    function tieBreakers(scores: { thematicRelevance: number; newsContent: number; publicBenefit: number; originality: number }[]) {
+    function tieBreakers(scores: ScoreRow[]) {
       return [
         scores.reduce((s, r) => s + r.thematicRelevance, 0),
         scores.reduce((s, r) => s + r.newsContent, 0),
@@ -107,10 +117,7 @@ export class Phase2ScoreRepository {
       ];
     }
 
-    function compareWorks(
-      a: { phase2Scores: Parameters<typeof totalScore>[0] },
-      b: { phase2Scores: Parameters<typeof totalScore>[0] },
-    ) {
+    function compareWorks(a: { phase2Scores: ScoreRow[] }, b: { phase2Scores: ScoreRow[] }) {
       const diff = totalScore(b.phase2Scores) - totalScore(a.phase2Scores);
       if (diff !== 0) { return diff; }
       const ta = tieBreakers(a.phase2Scores);

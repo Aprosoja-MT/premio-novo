@@ -6,6 +6,7 @@ export const CATEGORIES = [
   { value: 'AUDIO' as Category, label: 'Reportagem em Áudio' },
   { value: 'PHOTO' as Category, label: 'Fotojornalismo' },
   { value: 'UNIVERSITY' as Category, label: 'Jornalismo Universitário' },
+  { value: 'DESTAQUES_MT' as Category, label: 'Destaques MT' },
 ] as const;
 
 export const CATEGORY_VALUES = CATEGORIES.map(c => c.value);
