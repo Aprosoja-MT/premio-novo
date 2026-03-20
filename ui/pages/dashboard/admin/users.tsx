@@ -240,9 +240,15 @@ function UserCard({ user }: { user: UserRow }) {
 
   return (
     <div className="flex items-center gap-4 p-4 rounded-xl bg-white border border-aprosoja-mint/20 hover:border-aprosoja-mint/50 transition-colors">
-      {/* Avatar inicial */}
-      <div className="flex items-center justify-center w-9 h-9 rounded-full bg-aprosoja-mint/20 text-aprosoja-teal font-bold text-[13px] font-sans shrink-0">
-        {(user.candidate?.name ?? user.email).charAt(0).toUpperCase()}
+      {/* Avatar */}
+      <div className="w-9 h-9 rounded-full bg-aprosoja-mint/20 shrink-0 overflow-hidden flex items-center justify-center">
+        {user.candidate?.profilePhotoUrl ? (
+          <img src={user.candidate.profilePhotoUrl} alt={user.candidate.name} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-aprosoja-teal font-bold text-[13px] font-sans">
+            {(user.candidate?.name ?? user.email).charAt(0).toUpperCase()}
+          </span>
+        )}
       </div>
 
       {/* Info principal */}

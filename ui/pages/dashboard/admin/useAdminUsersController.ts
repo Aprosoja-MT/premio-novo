@@ -46,6 +46,7 @@ export type UserRow = {
     state: string;
     wantsMaster: boolean;
     emailConfirmedAt: string | null;
+    profilePhotoUrl: string | null;
     _count: { works: number };
   } | null;
 };

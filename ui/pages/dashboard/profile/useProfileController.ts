@@ -16,6 +16,9 @@ export type ProfileLoaderData = {
     wantsMaster: boolean;
     emailConfirmedAt: string | null;
     profilePhotoUrl: string | null;
+    worksCount: number;
+    hasDrt: boolean;
+    hasEnrollment: boolean;
   };
 };
 

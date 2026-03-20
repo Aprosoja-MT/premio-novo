@@ -58,6 +58,7 @@ export class UserRepository {
             state: true,
             wantsMaster: true,
             emailConfirmedAt: true,
+            profilePhoto: true,
             _count: { select: { works: true } },
           },
         },

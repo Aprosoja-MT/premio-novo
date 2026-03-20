@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Camera, CheckCircle2, Loader2, Trash2, User, XCircle } from 'lucide-react';
 import { useLoaderData } from 'react-router';
 import { CATEGORY_LABELS } from '~/lib/enums';
@@ -6,6 +6,9 @@ import { formatCpf, formatPhone } from '~/lib/utils';
 import { DashboardLayout } from '../DashboardLayout';
 import type { Role } from '~/lib/roles';
 import { useProfileController } from './useProfileController';
+import { useCategoryChangeController } from './useCategoryChangeController';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '~/components/ui/sheet';
+import { Button } from '~/components/ui/Button';
 
 export function ProfilePage() {
   const { role } = useLoaderData<{ role: Role }>();
@@ -150,6 +153,8 @@ function ProfileContent() {
         </div>
       </div>
 
+      <CategoryChangeSection />
+
       <input
         ref={fileInputRef}
         type="file"
@@ -158,6 +163,160 @@ function ProfileContent() {
         onChange={handleFileChange}
       />
     </motion.div>
+  );
+}
+
+function CategoryChangeSection() {
+  const {
+    candidate,
+    sheetOpen,
+    setSheetOpen,
+    openSheet,
+    selectedCategory,
+    setSelectedCategory,
+    availableCategories,
+    isUniversity,
+    categoryChanged,
+    docRequired,
+    docKey,
+    fileInputRef,
+    handleDocChange,
+    handleSubmit,
+    isUploading,
+    isSubmitting,
+    uploadError,
+    canSubmit,
+    hasWorks,
+  } = useCategoryChangeController();
+
+  return (
+    <>
+      <div className="flex flex-col gap-4 p-6 rounded-2xl bg-white border border-aprosoja-mint/20">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-[11px] font-bold font-sans text-aprosoja-teal uppercase tracking-widest">
+            Trocar categoria
+          </p>
+          <Button
+            type="button"
+            onClick={openSheet}
+            disabled={hasWorks}
+            className="h-[34px] rounded-[30px] text-[11px] font-bold uppercase tracking-wide cursor-pointer"
+          >
+            Trocar
+          </Button>
+        </div>
+
+        {hasWorks ? (
+          <p className="text-[12px] font-sans text-aprosoja-teal/50">
+            Exclua todas as suas obras em <a href="/dashboard/works" className="underline">Obras</a> antes de trocar de categoria.
+          </p>
+        ) : (
+          <p className="text-[12px] font-sans text-aprosoja-teal/50">
+            Categoria atual: <span className="font-semibold text-aprosoja-teal">{CATEGORY_LABELS[candidate.category] ?? candidate.category}</span>
+          </p>
+        )}
+      </div>
+
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-[420px] bg-white p-0 gap-0 border-l border-aprosoja-mint/30"
+        >
+          <SheetHeader className="px-6 pt-6 pb-5 border-b border-aprosoja-mint/20">
+            <SheetTitle className="font-heading-now text-[20px] text-aprosoja-teal leading-tight">
+              Trocar categoria
+            </SheetTitle>
+            <p className="text-[12px] font-sans text-aprosoja-teal/50 mt-0.5">
+              Selecione a nova categoria e envie o documento exigido.
+            </p>
+          </SheetHeader>
+
+          <div className="px-6 py-6 flex flex-col gap-5">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-bold font-sans text-aprosoja-teal uppercase tracking-wide">
+                Nova categoria
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={e => { setSelectedCategory(e.target.value as typeof selectedCategory); }}
+                className="w-full h-[44px] rounded-[12px] border-[1.5px] border-aprosoja-mint bg-white px-3 text-[13px] text-aprosoja-teal focus:outline-none focus:border-aprosoja-teal"
+              >
+                <option value={candidate.category}>
+                  {CATEGORY_LABELS[candidate.category] ?? candidate.category} (atual)
+                </option>
+                {availableCategories.map(c => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {categoryChanged && docRequired && (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold font-sans text-aprosoja-teal uppercase tracking-wide">
+                  {isUniversity ? 'Comprovante de matrícula' : 'DRT'}
+                </label>
+                <p className="text-[11px] font-sans text-aprosoja-teal/50">
+                  {isUniversity
+                    ? 'Envie o comprovante de matrícula ativa (PDF, JPEG ou PNG, máx. 10 MB).'
+                    : 'Envie o arquivo do DRT (PDF, JPEG ou PNG, máx. 10 MB).'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="h-[44px] rounded-[12px] border-[1.5px] border-dashed border-aprosoja-mint text-[12px] font-sans text-aprosoja-teal/60 hover:border-aprosoja-teal hover:text-aprosoja-teal transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  {isUploading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 size={13} className="animate-spin" /> Enviando...
+                    </span>
+                  ) : docKey ? (
+                    'Arquivo enviado — clique para substituir'
+                  ) : (
+                    'Clique para selecionar o arquivo'
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,image/jpeg,image/png"
+                  className="hidden"
+                  onChange={handleDocChange}
+                />
+              </div>
+            )}
+
+            <AnimatePresence>
+              {uploadError && (
+                <motion.p
+                  key="err"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-[12px] font-sans text-destructive font-medium"
+                >
+                  {uploadError}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!canSubmit || isSubmitting}
+              className="mt-2 h-[44px] w-full rounded-[30px] text-[11px] font-bold uppercase tracking-wide cursor-pointer"
+            >
+              {isSubmitting ? (
+                <><Loader2 size={14} className="animate-spin" /> Salvando...</>
+              ) : (
+                'Confirmar troca'
+              )}
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }
 

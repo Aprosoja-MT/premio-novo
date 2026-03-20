@@ -2,9 +2,12 @@ import { data, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from
 import { z } from 'zod';
 import { CandidateRepository } from '~/repositories/CandidateRepository';
 import { UserRepository } from '~/repositories/UserRepository';
+import { WorkRepository } from '~/repositories/WorkRepository';
 import { withSession, getSubFromToken } from '~/lib/session';
 import { Role } from '~/lib/roles';
 import { StorageGateway } from '~/gateways/StorageGateway';
+import { CATEGORY_VALUES } from '~/lib/enums';
+import type { Category } from '~/generated/prisma';
 
 const updatePhotoSchema = z.object({
   profilePhoto: z.string().min(1),
@@ -17,7 +20,8 @@ async function getCandidateForSession(accessToken: string) {
   const user = await userRepository.findByExternalId(externalId);
   if (!user) return null;
   const candidateRepository = new CandidateRepository();
-  return { user, candidate: await candidateRepository.findByUserId(user.id), candidateRepository };
+  const candidate = await candidateRepository.findByUserId(user.id);
+  return { user, candidate, candidateRepository };
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -32,6 +36,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const profilePhotoUrl = candidate.profilePhoto
       ? storageGateway.getFileUrl(candidate.profilePhoto)
       : null;
+
+    const works = await new WorkRepository().findByCandidateId(candidate.id);
+    const worksCount = works.length;
 
     return Response.json(
       {
@@ -48,6 +55,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
           wantsMaster: candidate.wantsMaster,
           emailConfirmedAt: candidate.emailConfirmedAt?.toISOString() ?? null,
           profilePhotoUrl,
+          worksCount,
+          hasDrt: !!candidate.drtFile,
+          hasEnrollment: !!candidate.enrollmentFile,
         },
       },
       { headers },
@@ -76,6 +86,44 @@ export async function action({ request }: ActionFunctionArgs) {
     if (intent === 'removePhoto') {
       await candidateRepository.updateProfilePhoto(candidate.id, null);
       return data({ success: true });
+    }
+
+    if (intent === 'changeCategory') {
+      const works = await new WorkRepository().findByCandidateId(candidate.id);
+      if (works.length > 0) {
+        return data({ error: 'Exclua todas as suas obras antes de trocar de categoria.' }, { status: 422 });
+      }
+
+      const changeCategorySchema = z.object({
+        category: z.enum(CATEGORY_VALUES as [Category, ...Category[]]),
+        drtFile: z.string().optional(),
+        enrollmentFile: z.string().optional(),
+      });
+
+      const parsed = changeCategorySchema.safeParse(Object.fromEntries(formData));
+      if (!parsed.success) {
+        return data({ error: 'Dados inválidos.' }, { status: 400 });
+      }
+
+      const { category, drtFile, enrollmentFile } = parsed.data;
+      const isUniversity = category === 'UNIVERSITY';
+      const needsDrt = !isUniversity && !candidate.drtFile && !drtFile;
+      const needsEnrollment = isUniversity && !candidate.enrollmentFile && !enrollmentFile;
+
+      if (needsDrt) {
+        return data({ error: 'O arquivo DRT é obrigatório para categorias profissionais.' }, { status: 400 });
+      }
+      if (needsEnrollment) {
+        return data({ error: 'O comprovante de matrícula é obrigatório para Jornalismo Universitário.' }, { status: 400 });
+      }
+
+      await candidateRepository.updateCategory(candidate.id, {
+        category,
+        drtFile: drtFile ?? candidate.drtFile ?? undefined,
+        enrollmentFile: enrollmentFile ?? candidate.enrollmentFile ?? undefined,
+      });
+
+      return data({ success: true, intent: 'changeCategory' });
     }
 
     return data({ error: 'Ação inválida.' }, { status: 400 });

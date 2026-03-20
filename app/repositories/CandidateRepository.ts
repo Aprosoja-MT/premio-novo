@@ -24,9 +24,19 @@ export class CandidateRepository {
   async updateProfilePhoto(id: string, profilePhoto: string | null) {
     return prisma.candidate.update({ where: { id }, data: { profilePhoto } });
   }
+
+  async updateCategory(id: string, params: CandidateRepository.UpdateCategoryParams) {
+    return prisma.candidate.update({ where: { id }, data: params });
+  }
 }
 
 export namespace CandidateRepository {
+  export type UpdateCategoryParams = {
+    category: Category;
+    drtFile?: string | null;
+    enrollmentFile?: string | null;
+  };
+
   export type CreateParams = {
     userId: string;
     name: string;

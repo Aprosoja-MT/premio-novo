@@ -2,6 +2,7 @@ import { data, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from
 import { z } from 'zod';
 import { EmailAlreadyInUse } from '~/errors/EmailAlreadyInUse';
 import { AuthGateway } from '~/gateways/AuthGateway';
+import { StorageGateway } from '~/gateways/StorageGateway';
 import { Role } from '~/lib/roles';
 import { withSession } from '~/lib/session';
 import { UserRepository } from '~/repositories/UserRepository';
@@ -18,12 +19,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const wantsMasterFilter = url.searchParams.get('wantsMaster');
 
     const userRepository = new UserRepository();
+    const storageGateway = new StorageGateway();
     const users = await userRepository.listWithStats({
       role: roleFilter && VALID_ROLES.includes(roleFilter) ? roleFilter : undefined,
       wantsMaster: wantsMasterFilter === 'true' ? true : wantsMasterFilter === 'false' ? false : undefined,
     });
 
-    return Response.json({ role, users }, { headers });
+    const usersWithPhotoUrls = users.map(u => ({
+      ...u,
+      candidate: u.candidate
+        ? {
+            ...u.candidate,
+            profilePhotoUrl: u.candidate.profilePhoto
+              ? storageGateway.getFileUrl(u.candidate.profilePhoto)
+              : null,
+          }
+        : null,
+    }));
+
+    return Response.json({ role, users: usersWithPhotoUrls }, { headers });
   });
 }
 
