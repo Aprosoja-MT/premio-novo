@@ -6,6 +6,7 @@ import { CATEGORY_VALUES } from '~/lib/enums';
 import { Role } from '~/lib/roles';
 import { getSubFromToken, withSession } from '~/lib/session';
 import { Phase1ReviewRepository } from '~/repositories/Phase1ReviewRepository';
+import { PhaseControlRepository } from '~/repositories/PhaseControlRepository';
 import { UserRepository } from '~/repositories/UserRepository';
 
 const REVIEWABLE_STATUSES = ['SUBMITTED', 'QUALIFIED', 'DISQUALIFIED'] as const satisfies WorkStatus[];
@@ -35,8 +36,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       ? categoryParam
       : undefined;
 
-    const repo = new Phase1ReviewRepository();
-    const result = await repo.listForReview({ page, status, category });
+    const phaseRepo = new PhaseControlRepository();
+    const [result, phaseOpen, phaseRow] = await Promise.all([
+      new Phase1ReviewRepository().listForReview({ page, status, category }),
+      phaseRepo.isOpen(1),
+      phaseRepo.getAll().then(rows => rows.find(r => r.phase === 1)),
+    ]);
     const { total, pageSize } = result;
 
     const storageGateway = new StorageGateway();
@@ -68,7 +73,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }));
 
     return Response.json(
-      { role, works: worksWithUrls, total, pageSize, page },
+      { role, works: worksWithUrls, total, pageSize, page, phaseOpen, phaseStarted: !!phaseRow?.startedAt },
       { headers },
     );
   });
@@ -100,6 +105,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
     if (!qualified && !justification?.trim()) {
       return data({ error: 'A justificativa é obrigatória ao inabilitar uma obra.' }, { status: 400 });
+    }
+
+    const phaseOpen = await new PhaseControlRepository().isOpen(1);
+    if (!phaseOpen && role !== Role.ADMIN) {
+      return data({ error: 'A fase 1 não está aberta.' }, { status: 403 });
     }
 
     const repo = new Phase1ReviewRepository();

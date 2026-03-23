@@ -46,12 +46,14 @@ export const CATEGORY_FILTER_OPTIONS = [
 ];
 
 export function usePhase1Controller() {
-  const { works, total, pageSize, page } = useLoaderData<{
+  const { works, total, pageSize, page, phaseOpen, phaseStarted, role } = useLoaderData<{
     role: Role;
     works: Phase1WorkRow[];
     total: number;
     pageSize: number;
     page: number;
+    phaseOpen: boolean;
+    phaseStarted: boolean;
   }>();
   const actionData = useActionData<{ success?: boolean; error?: string }>();
   const navigation = useNavigation();
@@ -114,11 +116,14 @@ export function usePhase1Controller() {
   }
 
   return {
+    role,
     works,
     total,
     pageSize,
     page,
     totalPages,
+    phaseOpen,
+    phaseStarted,
     statusFilter,
     categoryFilter,
     setFilter,

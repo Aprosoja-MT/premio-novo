@@ -1,18 +1,11 @@
 import { motion } from 'framer-motion';
-import { BookOpen, CheckCircle2, Clock, FileCheck, Star, Trophy, XCircle } from 'lucide-react';
+import { BookOpen, CheckCircle2, CircleDashed, Clock, FileCheck, FileText, Lock, Settings2, Star, Trophy, Users, XCircle } from 'lucide-react';
 import { useLoaderData } from 'react-router';
 import { CATEGORY_LABELS, WORK_STATUSES } from '~/lib/enums';
 import type { Role } from '~/lib/roles';
 import { DashboardLayout, ROLE_LABELS } from './DashboardLayout';
-
-const ADMIN_STATS = [
-  { label: 'Inscrições', value: '—' },
-  { label: 'Obras enviadas', value: '—' },
-  { label: 'Em avaliação', value: '—' },
-  { label: 'Habilitadas', value: '—' },
-  { label: 'Finalistas', value: '—' },
-  { label: 'Inabilitadas', value: '—' },
-];
+import type { PhaseRow } from './admin/useAdminPhasesController';
+import { PHASE_LABELS } from './admin/useAdminPhasesController';
 
 type WorkStatus = typeof WORK_STATUSES[number];
 
@@ -32,9 +25,19 @@ type CandidateData = {
   profilePhotoUrl: string | null;
 };
 
+type AdminStats = {
+  candidates: number;
+  submitted: number;
+  qualified: number;
+  disqualified: number;
+  finalist: number;
+  total: number;
+};
+
 type LoaderData =
   | { role: 'CANDIDATE'; candidate: CandidateData; works: Work[] }
-  | { role: Exclude<Role, 'CANDIDATE'> };
+  | { role: 'ADMIN'; stats: AdminStats; phases: PhaseRow[] }
+  | { role: Exclude<Role, 'CANDIDATE' | 'ADMIN'> };
 
 const STATUS_CONFIG: Record<WorkStatus, { label: string; color: string; icon: React.ElementType }> = {
   SUBMITTED: { label: 'Aguardando avaliação', color: 'text-amber-600 bg-amber-50 border-amber-200', icon: Clock },
@@ -56,7 +59,7 @@ export function DashboardPage() {
         {data.role === 'CANDIDATE'
           ? <CandidateOverview candidate={data.candidate} works={data.works} />
           : data.role === 'ADMIN'
-            ? <AdminOverview />
+            ? <AdminOverview stats={data.stats} phases={data.phases} />
             : <StaffPlaceholder role={data.role} />}
       </motion.div>
     </DashboardLayout>
@@ -225,9 +228,18 @@ function CandidateOverview({ candidate, works }: { candidate: CandidateData; wor
 // Admin overview
 // ---------------------------------------------------------------------------
 
-function AdminOverview() {
+function AdminOverview({ stats, phases }: { stats: AdminStats; phases: PhaseRow[] }) {
+  const statCards = [
+    { label: 'Inscrições', value: stats.candidates, icon: Users, accent: 'bg-aprosoja-teal/10 text-aprosoja-teal' },
+    { label: 'Obras enviadas', value: stats.total, icon: FileText, accent: 'bg-aprosoja-teal/10 text-aprosoja-teal' },
+    { label: 'Em avaliação', value: stats.submitted, icon: Clock, accent: 'bg-amber-50 text-amber-600' },
+    { label: 'Habilitadas', value: stats.qualified, icon: CheckCircle2, accent: 'bg-emerald-50 text-emerald-600' },
+    { label: 'Finalistas', value: stats.finalist, icon: Star, accent: 'bg-amber-50 text-amber-500' },
+    { label: 'Inabilitadas', value: stats.disqualified, icon: XCircle, accent: 'bg-destructive/5 text-destructive' },
+  ];
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <div>
         <span className="inline-flex items-center px-3 py-1 border border-aprosoja-mint rounded-full text-[10px] font-bold font-sans text-aprosoja-teal uppercase tracking-widest">
           Administrador
@@ -241,22 +253,82 @@ function AdminOverview() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {ADMIN_STATS.map((stat, i) => (
+        {statCards.map((stat, i) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut', delay: i * 0.05 }}
-            className="flex flex-col gap-2 p-4 sm:p-5 rounded-xl bg-white border border-aprosoja-mint/20"
+            className="flex flex-col gap-3 p-4 sm:p-5 rounded-2xl bg-white border border-aprosoja-mint/20"
           >
-            <span className="text-[10px] font-bold font-sans text-aprosoja-teal/40 uppercase tracking-widest">
-              {stat.label}
-            </span>
-            <span className="font-sans text-[30px] sm:text-[36px] font-bold text-aprosoja-teal leading-none">
-              {stat.value}
-            </span>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${stat.accent.split(' ')[0]}`}>
+              <stat.icon size={15} className={stat.accent.split(' ')[1]} strokeWidth={2} />
+            </div>
+            <div>
+              <span className="font-sans text-[28px] sm:text-[32px] font-bold text-aprosoja-teal leading-none block">
+                {stat.value}
+              </span>
+              <span className="text-[10px] font-bold font-sans text-aprosoja-teal/40 uppercase tracking-widest">
+                {stat.label}
+              </span>
+            </div>
           </motion.div>
         ))}
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[11px] font-bold font-sans text-aprosoja-teal/40 uppercase tracking-widest">
+            Fases do prêmio
+          </p>
+          <a
+            href="/dashboard/admin/phases"
+            className="inline-flex items-center gap-1.5 text-[11px] font-sans font-semibold text-aprosoja-teal/50 hover:text-aprosoja-teal transition-colors"
+          >
+            <Settings2 size={12} />
+            Gerenciar
+          </a>
+        </div>
+        <div className="flex flex-col gap-2">
+          {phases.map((phase, i) => {
+            const finished = !!phase.finishedAt;
+            const open = !!phase.startedAt && !finished;
+            const notStarted = !phase.startedAt;
+
+            return (
+              <motion.div
+                key={phase.phase}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut', delay: 0.3 + i * 0.04 }}
+                className="flex items-center gap-3 p-4 rounded-xl bg-white border border-aprosoja-mint/20"
+              >
+                <div className={`flex items-center justify-center w-7 h-7 rounded-full shrink-0 text-[11px] font-bold font-sans
+                  ${finished ? 'bg-emerald-50 text-emerald-600' : open ? 'bg-amber-50 text-amber-600' : 'bg-aprosoja-teal/5 text-aprosoja-teal/30'}`}>
+                  {phase.phase}
+                </div>
+                <p className="flex-1 text-[13px] font-sans font-medium text-aprosoja-teal truncate">
+                  {PHASE_LABELS[phase.phase]}
+                </p>
+                {finished && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-emerald-600 shrink-0">
+                    <Lock size={11} /> Finalizada
+                  </span>
+                )}
+                {open && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-amber-600 shrink-0">
+                    <Clock size={11} /> Em andamento
+                  </span>
+                )}
+                {notStarted && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-muted-foreground shrink-0">
+                    <CircleDashed size={11} /> Não iniciada
+                  </span>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

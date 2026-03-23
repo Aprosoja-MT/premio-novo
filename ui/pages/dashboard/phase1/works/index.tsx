@@ -40,10 +40,13 @@ export function Phase1WorksPage() {
 function Phase1WorksContent() {
   const ctrl = usePhase1Controller();
   const {
+    role,
     works,
     total,
     page,
     totalPages,
+    phaseOpen,
+    phaseStarted,
     statusFilter,
     categoryFilter,
     setFilter,
@@ -58,6 +61,10 @@ function Phase1WorksContent() {
     serverError,
     formatDate,
   } = ctrl;
+
+  const canEdit = phaseOpen || role === 'ADMIN';
+  const phaseFinished = phaseStarted && !phaseOpen;
+  const phaseNotStarted = !phaseStarted;
 
   return (
     <div className="flex flex-col gap-6">
@@ -74,6 +81,19 @@ function Phase1WorksContent() {
           </p>
         </div>
       </div>
+
+      {phaseFinished && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-amber-200 bg-amber-50 text-[12px] font-sans text-amber-700">
+          <span className="font-bold">Fase 1 encerrada.</span>
+          {role === 'ADMIN' ? 'Você pode editar como administrador.' : 'Avaliações não são permitidas.'}
+        </div>
+      )}
+      {phaseNotStarted && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-aprosoja-mint/30 bg-aprosoja-mint/5 text-[12px] font-sans text-aprosoja-teal/70">
+          <span className="font-bold">Fase 1 ainda não iniciada.</span>
+          {role !== 'ADMIN' && ' Aguarde o administrador iniciar esta fase.'}
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2">
         <select
@@ -147,6 +167,7 @@ function Phase1WorksContent() {
             setJustification={setJustification}
             onSubmit={submitReview}
             isSubmitting={isSubmitting}
+            canEdit={canEdit}
             serverError={serverError}
             formatDate={formatDate}
           />
@@ -209,6 +230,7 @@ function ReviewSheet({
   setJustification,
   onSubmit,
   isSubmitting,
+  canEdit,
   serverError,
   formatDate,
 }: {
@@ -217,6 +239,7 @@ function ReviewSheet({
   setJustification: (v: string) => void;
   onSubmit: (qualified: boolean) => void;
   isSubmitting: boolean;
+  canEdit: boolean;
   serverError?: string;
   formatDate: (iso: string) => string;
 }) {
@@ -355,7 +378,7 @@ function ReviewSheet({
         <Button
           type="button"
           onClick={() => onSubmit(false)}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !canEdit}
           className="flex-1 h-[44px] rounded-[30px] text-[11px] font-bold uppercase tracking-wide cursor-pointer bg-destructive hover:bg-destructive/90 text-white"
         >
           {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
@@ -364,7 +387,7 @@ function ReviewSheet({
         <Button
           type="button"
           onClick={() => onSubmit(true)}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !canEdit}
           className="flex-1 h-[44px] rounded-[30px] text-[11px] font-bold uppercase tracking-wide cursor-pointer"
         >
           {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}

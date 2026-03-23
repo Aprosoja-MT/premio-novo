@@ -39,10 +39,13 @@ export function Phase3WorksPage() {
 function Phase3WorksContent() {
   const ctrl = usePhase3Controller();
   const {
+    role,
     works,
     total,
     page,
     totalPages,
+    phaseOpen,
+    phaseStarted,
     categoryFilter,
     scoredFilter,
     setFilter,
@@ -59,6 +62,10 @@ function Phase3WorksContent() {
     formatDate,
   } = ctrl;
 
+  const canEdit = phaseOpen || role === 'ADMIN';
+  const phaseFinished = phaseStarted && !phaseOpen;
+  const phaseNotStarted = !phaseStarted;
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -74,6 +81,19 @@ function Phase3WorksContent() {
           </p>
         </div>
       </div>
+
+      {phaseFinished && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-amber-200 bg-amber-50 text-[12px] font-sans text-amber-700">
+          <span className="font-bold">Fase 3 encerrada.</span>
+          {role === 'ADMIN' ? 'Você pode editar como administrador.' : 'Avaliações não são permitidas.'}
+        </div>
+      )}
+      {phaseNotStarted && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-aprosoja-mint/30 bg-aprosoja-mint/5 text-[12px] font-sans text-aprosoja-teal/70">
+          <span className="font-bold">Fase 3 ainda não iniciada.</span>
+          {role !== 'ADMIN' && ' Aguarde o administrador iniciar esta fase.'}
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2">
         <select
@@ -148,6 +168,7 @@ function Phase3WorksContent() {
             onSubmit={submitScores}
             allScored={allScored}
             isSubmitting={isSubmitting}
+            canEdit={canEdit}
             serverError={serverError}
             formatDate={formatDate}
           />
@@ -216,6 +237,7 @@ function ScoreSheet({
   onSubmit,
   allScored,
   isSubmitting,
+  canEdit,
   serverError,
   formatDate,
 }: {
@@ -225,6 +247,7 @@ function ScoreSheet({
   onSubmit: () => void;
   allScored: boolean;
   isSubmitting: boolean;
+  canEdit: boolean;
   serverError?: string;
   formatDate: (iso: string) => string;
 }) {
@@ -362,7 +385,7 @@ function ScoreSheet({
         <Button
           type="button"
           onClick={onSubmit}
-          disabled={isSubmitting || !allScored}
+          disabled={isSubmitting || !allScored || !canEdit}
           className="w-full h-[44px] rounded-[30px] text-[11px] font-bold uppercase tracking-wide cursor-pointer"
         >
           {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Star size={14} />}

@@ -14,6 +14,7 @@ export default [
   route('dashboard/profile', 'routes/dashboard/profile.tsx'),
   route('dashboard/works', 'routes/dashboard/works.tsx'),
   route('dashboard/admin/users', 'routes/dashboard/admin/users.tsx'),
+  route('dashboard/admin/phases', 'routes/dashboard/admin/phases.tsx'),
   route('dashboard/phase1/works', 'routes/dashboard/phase1/works.tsx'),
   route('dashboard/phase2/works', 'routes/dashboard/phase2/works.tsx'),
   route('dashboard/phase3/works', 'routes/dashboard/phase3/works.tsx'),

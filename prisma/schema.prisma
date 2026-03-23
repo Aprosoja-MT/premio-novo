@@ -213,3 +213,17 @@ model Phase3Score {
   @@unique([workId, judgeId])
   @@map("phase3_scores")
 }
+
+// ---------------------------------------------------------------------------
+// Controle de fases — singleton por fase (phase = 1 | 2 | 3)
+// ---------------------------------------------------------------------------
+
+model PhaseControl {
+  phase       Int       @id
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  startedBy   String?
+  finishedBy  String?
+
+  @@map("phase_controls")
+}

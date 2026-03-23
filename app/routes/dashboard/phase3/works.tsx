@@ -6,6 +6,7 @@ import { CATEGORY_VALUES } from '~/lib/enums';
 import { Role } from '~/lib/roles';
 import { getSubFromToken, withSession } from '~/lib/session';
 import { Phase3ScoreRepository } from '~/repositories/Phase3ScoreRepository';
+import { PhaseControlRepository } from '~/repositories/PhaseControlRepository';
 import { UserRepository } from '~/repositories/UserRepository';
 
 async function getJudgeIdFromToken(accessToken: string) {
@@ -33,8 +34,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const scoredParam = url.searchParams.get('scored');
     const scored = scoredParam === 'true' ? true : scoredParam === 'false' ? false : undefined;
 
-    const repo = new Phase3ScoreRepository();
-    const result = await repo.listForScoring({ page, category, scored }, judgeId);
+    const phaseRepo = new PhaseControlRepository();
+    const [result, phaseOpen, phaseRow] = await Promise.all([
+      new Phase3ScoreRepository().listForScoring({ page, category, scored }, judgeId),
+      phaseRepo.isOpen(3),
+      phaseRepo.getAll().then(rows => rows.find(r => r.phase === 3)),
+    ]);
     const { total, pageSize } = result;
 
     const storageGateway = new StorageGateway();
@@ -66,7 +71,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }));
 
     return Response.json(
-      { role, works: worksWithUrls, total, pageSize, page },
+      { role, works: worksWithUrls, total, pageSize, page, phaseOpen, phaseStarted: !!phaseRow?.startedAt },
       { headers },
     );
   });
@@ -93,6 +98,11 @@ export async function action({ request }: ActionFunctionArgs) {
     const parsed = scoreSchema.safeParse(Object.fromEntries(formData));
     if (!parsed.success) {
       return data({ error: 'Dados inválidos.', fieldErrors: parsed.error.flatten().fieldErrors }, { status: 400 });
+    }
+
+    const phaseOpen = await new PhaseControlRepository().isOpen(3);
+    if (!phaseOpen && role !== Role.ADMIN) {
+      return data({ error: 'A fase 3 não está aberta.' }, { status: 403 });
     }
 
     const { workId, ...scores } = parsed.data;

@@ -60,12 +60,14 @@ const EMPTY_SCORES: Phase3ScoreValues = {
 };
 
 export function usePhase3Controller() {
-  const { works, total, pageSize, page, role } = useLoaderData<{
+  const { works, total, pageSize, page, role, phaseOpen, phaseStarted } = useLoaderData<{
     role: Role;
     works: Phase3WorkRow[];
     total: number;
     pageSize: number;
     page: number;
+    phaseOpen: boolean;
+    phaseStarted: boolean;
   }>();
   const actionData = useActionData<{ success?: boolean; error?: string }>();
   const navigation = useNavigation();
@@ -155,6 +157,8 @@ export function usePhase3Controller() {
     pageSize,
     page,
     totalPages,
+    phaseOpen,
+    phaseStarted,
     categoryFilter,
     scoredFilter,
     setFilter,

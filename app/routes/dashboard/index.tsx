@@ -3,11 +3,35 @@ import { Role } from '~/lib/roles';
 import { withSession, getSubFromToken } from '~/lib/session';
 import { UserRepository } from '~/repositories/UserRepository';
 import { CandidateRepository } from '~/repositories/CandidateRepository';
+import { PhaseControlRepository } from '~/repositories/PhaseControlRepository';
 import prisma from '~/lib/prismaClient';
 import { StorageGateway } from '~/gateways/StorageGateway';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return withSession(request, async ({ role, accessToken }, headers) => {
+    if (role === Role.ADMIN) {
+      const [workCounts, candidateCount, phases] = await Promise.all([
+        prisma.work.groupBy({ by: ['status'], _count: { _all: true } }),
+        prisma.candidate.count(),
+        new PhaseControlRepository().getAll(),
+      ]);
+
+      const countByStatus = Object.fromEntries(workCounts.map(r => [r.status, r._count._all]));
+
+      return Response.json({
+        role,
+        stats: {
+          candidates: candidateCount,
+          submitted: countByStatus['SUBMITTED'] ?? 0,
+          qualified: countByStatus['QUALIFIED'] ?? 0,
+          disqualified: countByStatus['DISQUALIFIED'] ?? 0,
+          finalist: countByStatus['FINALIST'] ?? 0,
+          total: Object.values(countByStatus).reduce((a, b) => a + b, 0),
+        },
+        phases,
+      }, { headers });
+    }
+
     if (role !== Role.CANDIDATE) {
       return Response.json({ role }, { headers });
     }

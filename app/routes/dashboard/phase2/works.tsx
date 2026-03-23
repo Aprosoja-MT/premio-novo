@@ -6,6 +6,7 @@ import { CATEGORY_VALUES } from '~/lib/enums';
 import { Role } from '~/lib/roles';
 import { getSubFromToken, withSession } from '~/lib/session';
 import { Phase2ScoreRepository } from '~/repositories/Phase2ScoreRepository';
+import { PhaseControlRepository } from '~/repositories/PhaseControlRepository';
 import { UserRepository } from '~/repositories/UserRepository';
 
 async function getJudgeIdFromToken(accessToken: string) {
@@ -33,8 +34,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const scoredParam = url.searchParams.get('scored');
     const scored = scoredParam === 'true' ? true : scoredParam === 'false' ? false : undefined;
 
-    const repo = new Phase2ScoreRepository();
-    const result = await repo.listForScoring({ page, category, scored }, judgeId);
+    const phaseRepo = new PhaseControlRepository();
+    const [result, phaseOpen, phaseRow] = await Promise.all([
+      new Phase2ScoreRepository().listForScoring({ page, category, scored }, judgeId),
+      phaseRepo.isOpen(2),
+      phaseRepo.getAll().then(rows => rows.find(r => r.phase === 2)),
+    ]);
     const { total, pageSize } = result;
 
     const storageGateway = new StorageGateway();
@@ -66,7 +71,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }));
 
     return Response.json(
-      { role, works: worksWithUrls, total, pageSize, page },
+      { role, works: worksWithUrls, total, pageSize, page, phaseOpen, phaseStarted: !!phaseRow?.startedAt },
       { headers },
     );
   });
@@ -104,6 +109,11 @@ export async function action({ request }: ActionFunctionArgs) {
       const repo = new Phase2ScoreRepository();
       const result = await repo.markFinalists();
       return data({ success: true, finalistCount: result.finalistCount });
+    }
+
+    const phaseOpen = await new PhaseControlRepository().isOpen(2);
+    if (!phaseOpen && role !== Role.ADMIN) {
+      return data({ error: 'A fase 2 não está aberta.' }, { status: 403 });
     }
 
     const parsed = scoreSchema.safeParse(Object.fromEntries(formData));

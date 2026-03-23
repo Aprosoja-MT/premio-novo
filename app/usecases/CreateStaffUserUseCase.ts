@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto';
 import { EmailAlreadyInUse } from '~/errors/EmailAlreadyInUse';
 import { AuthGateway } from '~/gateways/AuthGateway';
 import { Role } from '~/generated/prisma';
@@ -14,7 +13,7 @@ export class CreateStaffUserUseCase {
     const existing = await this.userRepository.findByEmail(input.email);
     if (existing) { throw new EmailAlreadyInUse(); }
 
-    const tempPassword = `Tmp@${randomBytes(8).toString('hex')}`;
+    const tempPassword = 'Aprosoja2025@';
 
     const { externalId } = await this.authGateway.signUp({ email: input.email, password: tempPassword });
 

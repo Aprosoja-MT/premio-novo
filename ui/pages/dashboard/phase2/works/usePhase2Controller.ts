@@ -75,12 +75,14 @@ const EMPTY_SCORES: Phase2ScoreValues = {
 };
 
 export function usePhase2Controller() {
-  const { works, total, pageSize, page, role } = useLoaderData<{
+  const { works, total, pageSize, page, role, phaseOpen, phaseStarted } = useLoaderData<{
     role: Role;
     works: Phase2WorkRow[];
     total: number;
     pageSize: number;
     page: number;
+    phaseOpen: boolean;
+    phaseStarted: boolean;
   }>();
   const actionData = useActionData<{ success?: boolean; error?: string; finalistCount?: number }>();
   const navigation = useNavigation();
@@ -181,6 +183,8 @@ export function usePhase2Controller() {
     pageSize,
     page,
     totalPages,
+    phaseOpen,
+    phaseStarted,
     categoryFilter,
     scoredFilter,
     setFilter,
