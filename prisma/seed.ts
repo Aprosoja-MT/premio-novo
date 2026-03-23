@@ -31,6 +31,7 @@ const USER_POOL_ID = process.env['COGNITO_USER_POOL_ID']!;
 
 const SEED_STAFF = [
   { email: 'admin@aprosoja.com.br',           password: 'Admin@123456',         role: 'ADMIN'           as const },
+  { email: 'ian.martins@aprosoja.com.br',     password: 'Aprosoja2025@',        role: 'ADMIN'           as const },
   { email: 'habilitacao@aprosoja.com.br',      password: 'Habilita@123456',      role: 'PHASE1_REVIEWER' as const },
   { email: 'tecnico1@aprosoja.com.br',         password: 'Tecnico1@123456',      role: 'PHASE2_JUDGE'    as const },
   { email: 'tecnico2@aprosoja.com.br',         password: 'Tecnico2@123456',      role: 'PHASE2_JUDGE'    as const },

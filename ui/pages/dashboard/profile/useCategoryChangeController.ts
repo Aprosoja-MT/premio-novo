@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useActionData, useLoaderData, useNavigation, useRevalidator, useSubmit } from 'react-router';
-import { CATEGORIES } from '~/lib/enums';
+import { SELECTABLE_CATEGORIES } from '~/lib/enums';
 import type { ProfileLoaderData } from './useProfileController';
 
 export function useCategoryChangeController() {
@@ -92,7 +92,7 @@ export function useCategoryChangeController() {
     submit(form, { method: 'post', action: '/dashboard/profile' });
   }
 
-  const availableCategories = CATEGORIES.filter(c => c.value !== candidate.category);
+  const availableCategories = SELECTABLE_CATEGORIES.filter(c => c.value !== candidate.category);
   const categoryChanged = selectedCategory !== candidate.category;
   const canSubmit = categoryChanged && (!docRequired || docKey !== null) && !isUploading;
 

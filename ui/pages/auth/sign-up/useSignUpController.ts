@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { useForm, type UseFormReturn } from 'react-hook-form';
 import { useActionData, useNavigation, useSubmit } from 'react-router';
 import { z } from 'zod/v4';
-import { CATEGORIES, CATEGORY_VALUES } from '~/lib/enums';
+import { SELECTABLE_CATEGORIES, SELECTABLE_CATEGORY_VALUES } from '~/lib/enums';
 import { isValidCpf } from '~/lib/cpf';
 import { isValidPassport } from '~/lib/passport';
 
-export { CATEGORIES };
+export { SELECTABLE_CATEGORIES as CATEGORIES };
 
 const BRAZILIAN_STATES = [
   'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA',
@@ -22,7 +22,7 @@ const schema = z.object({
   phone: z.string().min(10, { error: 'Telefone inválido.' }),
   state: z.enum(BRAZILIAN_STATES, { error: 'Selecione um estado.' }),
   city: z.string().min(2, { error: 'Informe sua cidade.' }),
-  category: z.enum(CATEGORY_VALUES as [string, ...string[]], { error: 'Selecione uma categoria.' }),
+  category: z.enum(SELECTABLE_CATEGORY_VALUES as [string, ...string[]], { error: 'Selecione uma categoria.' }),
   wantsMaster: z.boolean().default(false),
   passport: z.string().refine((v) => !v || isValidPassport(v), { error: 'Passaporte inválido. Formato: AA000000.' }).optional(),
   visaExpiry: z.date({ error: 'Informe a validade do visto.' }).optional(),

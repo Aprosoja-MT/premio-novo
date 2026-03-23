@@ -6,7 +6,7 @@ import { WorkRepository } from '~/repositories/WorkRepository';
 import { withSession, getSubFromToken } from '~/lib/session';
 import { Role } from '~/lib/roles';
 import { StorageGateway } from '~/gateways/StorageGateway';
-import { CATEGORY_VALUES } from '~/lib/enums';
+import { SELECTABLE_CATEGORY_VALUES } from '~/lib/enums';
 import type { Category } from '~/generated/prisma';
 
 const updatePhotoSchema = z.object({
@@ -95,7 +95,7 @@ export async function action({ request }: ActionFunctionArgs) {
       }
 
       const changeCategorySchema = z.object({
-        category: z.enum(CATEGORY_VALUES as [Category, ...Category[]]),
+        category: z.enum(SELECTABLE_CATEGORY_VALUES as [Category, ...Category[]]),
         drtFile: z.string().optional(),
         enrollmentFile: z.string().optional(),
       });

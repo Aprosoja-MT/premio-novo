@@ -11,6 +11,10 @@ export const CATEGORIES = [
 
 export const CATEGORY_VALUES = CATEGORIES.map(c => c.value);
 
+export const SELECTABLE_CATEGORIES = CATEGORIES.filter(c => c.value !== 'DESTAQUES_MT');
+
+export const SELECTABLE_CATEGORY_VALUES = SELECTABLE_CATEGORIES.map(c => c.value);
+
 export const CATEGORY_LABELS: Record<string, string> = {
   VIDEO: 'Reportagem em Vídeo',
   TEXT: 'Reportagem em Texto',
