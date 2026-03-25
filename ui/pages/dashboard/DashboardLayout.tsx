@@ -76,7 +76,7 @@ function SidebarContent({ role }: { role: Role }) {
   return (
     <>
       <div className="px-5 pt-6 pb-5 border-b border-white/10">
-        <img src="/assets/logo-aprosoja-branca.svg" alt="Aprosoja MT" className="h-9 w-auto" />
+        <img src="/assets/LOGO_APROSOJA_BRANCO.svg" alt="Aprosoja MT" className="h-9 w-auto" />
       </div>
 
       <nav className="flex-1 px-3 py-4">
@@ -187,7 +187,7 @@ function Topbar({ role, onMenuClick }: { role: Role; onMenuClick: () => void }) 
       </button>
 
       <div className="flex items-center gap-2 lg:hidden">
-        <img src="/assets/logo-aprosoja.png" alt="Aprosoja MT" className="h-6 w-auto" />
+        <img src="/assets/LOGO_APROSOJA_VERDE.svg" alt="Aprosoja MT" className="h-6 w-auto" />
       </div>
 
       <div className="ml-auto hidden lg:block">

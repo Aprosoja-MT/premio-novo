@@ -3,9 +3,9 @@ import { ArrowLeft, Eye, EyeOff, Loader2, Upload } from 'lucide-react';
 import { useRef } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { Button } from '~/components/ui/Button';
+import { DatePicker } from '~/components/ui/date-picker';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { DatePicker } from '~/components/ui/date-picker';
 import { maskPassport } from '~/lib/passport';
 import { CATEGORIES, useSignUpController, type SignUpFormValues, type Step } from './useSignUpController';
 
@@ -53,7 +53,7 @@ export function SignUpPage() {
       <main className="flex-1 flex items-center justify-center px-6 py-12 bg-[#F0F0ED]">
         <div className="w-full max-w-[460px]">
           <motion.div {...fadeUp(0)} className="mb-8 lg:hidden">
-            <img src="/assets/logo-aprosoja.png" alt="Aprosoja MT" className="h-[36px] w-auto" />
+            <img src="/assets/LOGO_APROSOJA_VERDE.svg" alt="Aprosoja MT" className="h-[36px] w-auto" />
           </motion.div>
 
           <motion.a {...fadeUp(0)} href="/auth/sign-in" className="inline-flex items-center gap-1.5 text-[12px] font-sans text-[#024240]/50 hover:text-[#024240] transition-colors mb-6">
@@ -464,49 +464,36 @@ function Step3({
 
 function LeftPanel() {
   return (
-    <aside className="hidden lg:flex flex-col justify-between w-[480px] xl:w-[520px] min-h-screen bg-[#024240] px-12 py-12 relative overflow-hidden">
+    <aside className="hidden lg:flex flex-col justify-between w-[480px] xl:w-[520px] min-h-screen bg-[#024240] px-12 py-12 relative overflow-hidden items-start">
       <div aria-hidden className="absolute -top-24 -right-24 w-[320px] h-[320px] rounded-full"
         style={{ background: 'radial-gradient(circle, rgba(148,210,185,0.12) 0%, transparent 70%)' }} />
       <div aria-hidden className="absolute bottom-0 -left-16 w-[280px] h-[280px] rounded-full"
         style={{ background: 'radial-gradient(circle, rgba(148,210,185,0.08) 0%, transparent 70%)' }} />
 
-      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="relative z-10">
-        <img src="/assets/logo-aprosoja-branca.svg" alt="Aprosoja MT" className="h-[60px] w-auto block" />
+      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: 'easeOut' }} className="relative z-10 w-[180px] xl:w-[210px] flex justify-center">
+        <img src="/assets/LOGO_APROSOJA_BRANCO.svg" alt="Aprosoja MT" className="h-[60px] w-auto block" />
       </motion.div>
 
-      <div className="relative z-10 flex flex-col gap-8">
+      <div className="relative z-10 flex flex-col gap-6 w-[180px] xl:w-[210px]">
         <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}>
           <img
-            src="/assets/logo-premio-aprosoja.png"
+            src="/assets/LOGO_PREMIO_BRANCO.png"
             alt="Prêmio Aprosoja MT de Jornalismo"
-            className="w-[200px] xl:w-[240px] h-auto"
-            style={{ filter: 'brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0,0,0,0.3))', opacity: 0.92 }}
+            className="w-full h-auto"
           />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.25 }} className="flex flex-col gap-3">
+        <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.25 }} className="flex flex-col items-center gap-2">
           <span className="inline-flex items-center gap-2 h-[26px] w-fit px-3 border-[1.5px] border-[#94d2b9]/50 rounded-[30px] text-[10px] font-bold font-sans text-[#94d2b9] uppercase tracking-wide">
             EDIÇÃO 2026
           </span>
-          <h2 className="font-heading-now text-[28px] xl:text-[32px] leading-[1.15] text-white">
+          <h2 className="font-heading-now text-[28px] xl:text-[32px] leading-[1.15] text-white text-center">
             Inscreva-se<br />no prêmio
           </h2>
-          <p className="text-[13px] font-sans text-white/50 leading-relaxed max-w-[280px]">
-            Preencha seus dados para participar do Prêmio Aprosoja MT de Jornalismo 2026.
-          </p>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.35 }} className="flex flex-col gap-2">
-          {['5 categorias de jornalismo', 'Premiações em dinheiro e troféus', 'Aberto para todo o Brasil'].map((item) => (
-            <div key={item} className="flex items-center gap-3">
-              <div className="w-1 h-1 rounded-full bg-[#94d2b9]" />
-              <span className="text-[12px] font-sans text-white/60">{item}</span>
-            </div>
-          ))}
         </motion.div>
       </div>
 
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.5 }} className="relative z-10 text-[11px] font-sans text-white/30">
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease: 'easeOut', delay: 0.5 }} className="relative z-10 text-[11px] font-sans text-white/30 w-[180px] xl:w-[210px] text-center">
         © 2026 Aprosoja MT. Todos os direitos reservados.
       </motion.p>
     </aside>

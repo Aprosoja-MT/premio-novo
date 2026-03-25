@@ -24,7 +24,7 @@ export const SOCIAL_ICONS = [
 ];
 
 export const LINKS = [
-  { label: 'TRABALHE CONOSCO', href: 'https://aprosoja.com.br/trabalhe-conosco' },
+  { label: 'TRABALHE CONOSCO', href: 'https://aprosoja-mt.vagas.solides.com.br/' },
   { label: 'FALE CONOSCO', href: 'https://aprosoja.com.br/contato/fale-conosco' },
   { label: 'ATESTADO DE ASSOCIAÇÃO', href: 'https://aprosoja.com.br/area-do-associado' },
 ];

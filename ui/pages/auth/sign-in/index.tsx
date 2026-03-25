@@ -30,7 +30,7 @@ export function SignInPage() {
         <div className="w-full max-w-[400px]">
           <motion.div {...fadeUp(0)} className="mb-8 lg:hidden">
             <img
-              src="/assets/logo-aprosoja.png"
+              src="/assets/LOGO_APROSOJA_VERDE.svg"
               alt="Aprosoja MT"
               className="h-[36px] w-auto"
             />
@@ -226,36 +226,32 @@ export function SignInPage() {
 
 function LeftPanel() {
   return (
-    <aside className="hidden lg:flex flex-col justify-between w-[480px] xl:w-[520px] min-h-screen bg-[#024240] px-12 py-12 relative overflow-hidden">
+    <aside className="hidden lg:flex flex-col justify-between w-[480px] xl:w-[520px] min-h-screen bg-[#024240] px-12 py-12 relative overflow-hidden items-start">
       <BackgroundOrbs />
 
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="relative z-10"
+        className="relative z-10 w-[180px] xl:w-[210px] flex justify-center"
       >
         <img
-          src="/assets/logo-aprosoja-branca.svg"
+          src="/assets/LOGO_APROSOJA_BRANCO.svg"
           alt="Aprosoja MT"
           className="h-[60px] w-auto block"
         />
       </motion.div>
 
-      <div className="relative z-10 flex flex-col gap-8">
+      <div className="relative z-10 flex flex-col gap-6 w-[180px] xl:w-[210px]">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
         >
           <img
-            src="/assets/logo-premio-aprosoja.png"
+            src="/assets/LOGO_PREMIO_BRANCO.png"
             alt="Prêmio Aprosoja MT de Jornalismo"
-            className="w-[200px] xl:w-[240px] h-auto"
-            style={{
-              filter: 'brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0,0,0,0.3))',
-              opacity: 0.92,
-            }}
+            className="w-full h-auto"
           />
         </motion.div>
 
@@ -263,12 +259,12 @@ function LeftPanel() {
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.25 }}
-          className="flex flex-col gap-3"
+          className="flex flex-col items-center gap-2"
         >
           <span className="inline-flex items-center gap-2 h-[26px] w-fit px-3 border-[1.5px] border-[#94d2b9]/50 rounded-[30px] text-[10px] font-bold font-sans text-[#94d2b9] uppercase tracking-wide">
             EDIÇÃO 2026
           </span>
-          <h2 className="font-heading-now text-[28px] xl:text-[32px] leading-[1.15] text-white">
+          <h2 className="font-heading-now text-[28px] xl:text-[32px] leading-[1.15] text-white text-center">
             O agro sustentável<br />que transforma
           </h2>
           <p className="text-[13px] font-sans text-white/50 leading-relaxed max-w-[280px]">
@@ -295,7 +291,7 @@ function LeftPanel() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut', delay: 0.5 }}
-        className="relative z-10 text-[11px] font-sans text-white/30"
+        className="relative z-10 text-[11px] font-sans text-white/30 w-[180px] xl:w-[210px] text-center"
       >
         © 2026 Aprosoja MT. Todos os direitos reservados.
       </motion.p>

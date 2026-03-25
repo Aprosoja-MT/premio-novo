@@ -17,7 +17,7 @@ export function Header() {
         <div className="h-[71px] flex items-center gap-3 lg:gap-6">
           <a href="#" className="shrink-0" onClick={closeMenu}>
             <img
-              src="/assets/logo-aprosoja.png"
+              src="/assets/LOGO_APROSOJA_VERDE.svg"
               alt="Aprosoja MT"
               className="h-[34px] lg:h-[42px] w-auto"
             />

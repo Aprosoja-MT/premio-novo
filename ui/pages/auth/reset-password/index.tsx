@@ -22,7 +22,7 @@ export function ResetPasswordPage() {
       <main className="flex-1 flex items-center justify-center px-6 py-12 bg-[#F0F0ED]">
         <div className="w-full max-w-[400px]">
           <motion.div {...fadeUp(0)} className="mb-8 lg:hidden">
-            <img src="/assets/logo-aprosoja.png" alt="Aprosoja MT" className="h-[36px] w-auto" />
+            <img src="/assets/LOGO_APROSOJA_VERDE.svg" alt="Aprosoja MT" className="h-[36px] w-auto" />
           </motion.div>
 
           <motion.a
@@ -180,7 +180,7 @@ function LeftPanel() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="relative z-10"
       >
-        <img src="/assets/logo-aprosoja-branca.svg" alt="Aprosoja MT" className="h-[60px] w-auto block" />
+        <img src="/assets/LOGO_APROSOJA_BRANCO.svg" alt="Aprosoja MT" className="h-[60px] w-auto block" />
       </motion.div>
 
       <motion.div
