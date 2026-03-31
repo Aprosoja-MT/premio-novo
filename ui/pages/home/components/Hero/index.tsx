@@ -16,7 +16,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="-mt-[19%]">
+      <div className="-mt-[19%] 2xl:-mt-[16%]">
         <CityIllustration />
       </div>
     </section>

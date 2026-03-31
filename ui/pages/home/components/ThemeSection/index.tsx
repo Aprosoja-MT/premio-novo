@@ -30,7 +30,7 @@ export function ThemeSection() {
   return (
     <div className="bg-[#0B4B49]">
       <div className="relative w-full bg-[#F0F0ED]">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 lg:-mt-4 xl:-mt-16 pb-56 sm:pb-52 lg:pb-64 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-6 sm:gap-x-8 lg:gap-x-16 sm:gap-y-8">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pt-0 lg:-mt-4 xl:-mt-16 pb-56 sm:pb-52 lg:pb-64 2xl:pb-80 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-6 sm:gap-x-8 lg:gap-x-16 sm:gap-y-8">
           {THEME_BADGES.map((badge, i) => (
             <FadeIn key={badge.label} delay={i * 0.1}>
               <InfoBadge label={badge.label} labelWidth={badge.labelWidth}>
